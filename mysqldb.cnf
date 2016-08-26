@@ -1,0 +1,5 @@
+[client]
+database = qm_test_proj
+user = qmtestprojuser
+password = vm98usoe
+default-character-set = utf8
