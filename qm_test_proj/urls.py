@@ -15,8 +15,14 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic.base import TemplateView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/', include('api.urls'))
+    url(r'^users/', include('users.urls')),
+    url(r'^expenses/', include('expenses.urls')),
+    url(r'^auth/', include('rest_framework.urls')),
+    url(r'^index/$',
+        TemplateView.as_view(template_name='index.html'),
+        name='index'),
 ]
