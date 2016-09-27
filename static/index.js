@@ -28,11 +28,11 @@ $.ajaxSetup({
     }
 });
 
-function call() {
-	var msg   = $('#formx').serialize();
+function registration_post() {
+	var msg   = $('#registration_form').serialize();
 	$.ajax({
 		type: 'POST',
-		url: '/api/bulshit/',
+		url: '/users/',
 		data: msg,
 		success: function(data) {
 			$('#results').html(data);

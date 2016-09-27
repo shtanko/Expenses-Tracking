@@ -9,16 +9,24 @@ class Expense(models.Model):
     """
     This class describes main application model, every object witch represents
     a user expense, that have
-    .name   --  short description of an item, often a type of expense
-    .descr  --  optionnal field that contains full description that user want
-                to add to that item
-    .dt     --  date and time, then expense was done
-    .value  --  actually an expense value in USD
+
+    name:
+        short description of an item, often a type of expense
+    descr:
+        optionnal field that contains full description that user want to add
+        to that item
+    created:
+        date and time, then expense was commited
+    last_modified:
+        date and time of the last Expense.save() running
+    value:
+        actually an expense value in USD
     """
-    name = models.CharField(max_length=100)
-    descr = models.TextField()
-    dt = models.DateTimeField()
-    value = models.FloatField()
+    name = models.CharField(max_length=100, blank=False)
+    descr = models.TextField(blank=True)
+    created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+    value = models.FloatField(default=0.0, blank=False)
     owner = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

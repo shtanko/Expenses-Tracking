@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^users/', include('users.urls')),
     url(r'^expenses/', include('expenses.urls')),
     url(r'^auth/', include('rest_framework.urls')),
-    url(r'^index/$',
+    url(r'^$',
         TemplateView.as_view(template_name='index.html'),
         name='index'),
 ]

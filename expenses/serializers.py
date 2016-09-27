@@ -11,4 +11,12 @@ class ExpenseSerializer(serializers.ModelSerializer):
 
     class Meta():
         model = Expense
-        fileds = ('id', 'name', 'descr', 'dt', 'value', 'owner')
+        fileds = (
+            'id',
+            'name',
+            'value',
+            'descr',
+            'created',
+            'last_modified',
+            'owner',
+        )
