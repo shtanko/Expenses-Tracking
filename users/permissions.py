@@ -3,28 +3,15 @@ from rest_framework.permissions import BasePermission
 
 
 class UserPermission(BasePermission):
-    """
-    Docstring for class UserPermission
-    """
-
     def is_admin_or_manager(self, user):
-        """
-        Docstring for method is_admin_or_manager
-        """
-        return user.groups.get(
+        return user.groups.filter(
             Q(name='manager_users') | Q(name='admin_users')
         ).exists()
 
     def is_admin(self, user):
-        """
-        Docstring for method is_admin
-        """
-        return user.groups.get(name='admin_users').exists()
+        return user.groups.filter(name='admin_users').exists()
 
     def has_permission(self, request, view):
-        """
-        Return `True` if permission is granted, `False` otherwise.
-        """
         user = request.user
 
         if user.is_authenticated():
@@ -48,9 +35,6 @@ class UserPermission(BasePermission):
         return False
 
     def has_object_permission(self, request, view, obj):
-        """
-        Return `True` if permission is granted, `False` otherwise.
-        """
         user = request.user
 
         # Object permissions granted only to authenticated users.
