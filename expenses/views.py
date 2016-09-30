@@ -3,18 +3,15 @@ from rest_framework import permissions
 
 from expenses.models import Expense
 from expenses.serializers import ExpenseSerializer
-from expenses.permissions import IsOwner
+from expenses.permissions import IsOwnerOrAdmin
 
 
-class ExpenseList(generics.ListAPIView):
-    # queryset = Expense.objects.all()
+class ExpenseListCreate(generics.ListCreateAPIView):
     serializer_class = ExpenseSerializer
     permission_classes = (
         permissions.IsAuthenticated,
+        IsOwnerOrAdmin,
     )
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
 
     def get_queryset(self):
         username = self.request.user.username
@@ -22,13 +19,10 @@ class ExpenseList(generics.ListAPIView):
         return queryset
 
 
-class ExpenseDetail(generics.RetrieveAPIView):
+class ExpenseRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
     permission_classes = (
         permissions.IsAuthenticated,
-        IsOwner,
+        IsOwnerOrAdmin,
     )
-
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)

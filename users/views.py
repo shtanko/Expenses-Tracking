@@ -9,6 +9,3 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (UserPermission,)
-
-    def perform_update(self, serializer):
-        serializer.save(current_user=self.request.user)

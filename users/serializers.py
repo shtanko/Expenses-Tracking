@@ -1,19 +1,25 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
-from users.permissions import UserPermission
+from users import permissions
 from users.models import User
-from expenses.models import Expense
+# from expenses.models import Expense
 
 
-class UserSerializer(serializers.ModelSerializer):
+# class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.HyperlinkedModelSerializer):
     """
     Docstring for class UserSerializer
     """
-    expenses = serializers.PrimaryKeyRelatedField(
-        allow_null=True,
+    # expenses = serializers.PrimaryKeyRelatedField(
+    #     allow_null=True,
+    #     many=True,
+    #     queryset=Expense.objects.all()
+    # )
+    expenses = serializers.HyperlinkedRelatedField(
+        view_name='expenses:detail',
         many=True,
-        queryset=Expense.objects.all()
+        read_only=True
     )
     # groups = serializers.PrimaryKeyRelatedField(
     #     many=True,
@@ -27,11 +33,16 @@ class UserSerializer(serializers.ModelSerializer):
     # groups = serializers.StringRelatedField(many=True)
     # expenses = serializers.StringRelatedField(many=True)
 
+    current_user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
     only_admin_editable_fields = ('groups',)
 
     class Meta():
         model = User
         fields = (
+            'url',
             'id',
             'username',
             'password',
@@ -40,9 +51,11 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'expenses',
             'groups',
+            'current_user',
         )
         extra_kwargs = {
             'password': {'write_only': True},
+            'url': {'view_name': 'users:detail'},
         }
 
     def create(self, validated_data):
@@ -60,9 +73,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         current_user = validated_data['current_user']
-        is_admin = UserPermission().is_admin(current_user)
+        is_admin_or_manager = (permissions.is_admin_or_manager(current_user))
         for attr, value in validated_data.items():
-            if attr in self.only_admin_editable_fields and not is_admin:
+            if (attr in self.only_admin_editable_fields and
+                    not is_admin_or_manager):
                 continue
             elif attr == 'password':
                 instance.set_password(value)

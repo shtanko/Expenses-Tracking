@@ -2,15 +2,17 @@ from django.db.models import Q
 from rest_framework.permissions import BasePermission
 
 
+def is_admin_or_manager(user):
+    return user.groups.filter(
+        Q(name='manager_users') | Q(name='admin_users')
+    ).exists()
+
+
+def is_admin(user):
+    return user.groups.filter(name='admin_users').exists()
+
+
 class UserPermission(BasePermission):
-    def is_admin_or_manager(self, user):
-        return user.groups.filter(
-            Q(name='manager_users') | Q(name='admin_users')
-        ).exists()
-
-    def is_admin(self, user):
-        return user.groups.filter(name='admin_users').exists()
-
     def has_permission(self, request, view):
         user = request.user
 
@@ -20,7 +22,7 @@ class UserPermission(BasePermission):
             # account, but already registered and authenticated regular
             # users can not create new user instances).
             if view.action in ['list', 'create']:
-                if self.is_admin_or_manager(user):
+                if is_admin_or_manager(user):
                     return True
             # Permissions to other view actions like `retrieve`, `update`,
             # `partial_update` and `destroy` are granted to all registered
@@ -45,7 +47,7 @@ class UserPermission(BasePermission):
             else:
                 # And only admins or user managers can CRUD another
                 # accounts.
-                if self.is_admin_or_manager(user):
+                if is_admin_or_manager(user):
                     return True
         else:
             # If user does not authenticated it can only create new instance
