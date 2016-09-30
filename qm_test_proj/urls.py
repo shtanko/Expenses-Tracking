@@ -13,16 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
+
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic.base import TemplateView
+
+from qm_test_proj import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^users/', include('users.urls')),
     url(r'^expenses/', include('expenses.urls')),
     url(r'^auth/', include('rest_framework.urls')),
-    url(r'^$',
+    url(r'^index/$',
         TemplateView.as_view(template_name='index.html'),
         name='index'),
+    url(r'^$', views.api_root),
 ]
