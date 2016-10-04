@@ -8,7 +8,7 @@ def api_root(request, format=None):
     return Response({
         'users':
             reverse(
-                'users:list',
+                'users:list_and_create',
                 request=request,
                 format=format
             ),

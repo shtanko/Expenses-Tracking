@@ -18,6 +18,6 @@ user_detail = views.UserViewSet.as_view({
 })
 
 urlpatterns = [
-    url(r'^$', user_list, name='list'),
+    url(r'^$', user_list, name='list_and_create'),
     url(r'^(?P<pk>[0-9]+)/$', user_detail, name='detail'),
 ]
