@@ -3,41 +3,41 @@ from rest_framework import serializers
 
 from users import permissions
 from users.models import User
-# from expenses.models import Expense
 
 
-# class UserSerializer(serializers.ModelSerializer):
+def is_group_exists(group_name=None):
+    if group_name:
+        if not Group.objects.filter(name=group_name).exists():
+            raise serializers.ValidationError(
+                'Group with name %s does not exists.' % (group_name)
+            )
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    """
-    Docstring for class UserSerializer
-    """
-    # expenses = serializers.PrimaryKeyRelatedField(
-    #     allow_null=True,
-    #     many=True,
-    #     queryset=Expense.objects.all()
-    # )
     expenses = serializers.HyperlinkedRelatedField(
         view_name='expenses:detail',
         many=True,
         read_only=True
     )
-    # groups = serializers.PrimaryKeyRelatedField(
-    #     many=True,
-    #     queryset=Group.objects.all()
-    # )
+
+    # Throught this field user will GET list of groups which current user
+    # belogns to.
     groups = serializers.SlugRelatedField(
         slug_field='name',
         many=True,
-        queryset=Group.objects.all()
+        read_only=True
     )
-    # groups = serializers.StringRelatedField(many=True)
-    # expenses = serializers.StringRelatedField(many=True)
-
+    # And through this field admin will POST (set) current user permissions.
+    group = serializers.CharField(
+        write_only=True,
+        validators=[is_group_exists],
+        required=False
+    )
     current_user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
 
-    only_admin_editable_fields = ('groups',)
+    only_admin_editable_fields = ('group',)
 
     class Meta():
         model = User
@@ -51,10 +51,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'last_name',
             'expenses',
             'groups',
+            'group',
             'current_user',
         )
         extra_kwargs = {
-            'password': {'write_only': True},
+            'password': {
+                'write_only': True,
+                'style': {'input_type': 'password'}
+            },
             'url': {'view_name': 'users:detail'},
         }
 
@@ -68,18 +72,29 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         )
         # Each new user has permissions of the regular users.
         regular_users = Group.objects.get(name='regular_users')
-        user.groups.add(regular_users)
+        user.groups.set([regular_users])
+        # But admin can create user with custom permissions
+        current_user = validated_data['current_user']
+        if current_user:
+            is_admin = (permissions.is_admin(current_user))
+            group_name = validated_data['group']
+            if is_admin and group_name:
+                group = Group.objects.get(name=group_name)
+                user.group.set([group])
         return user
 
     def update(self, instance, validated_data):
         current_user = validated_data['current_user']
-        is_admin_or_manager = (permissions.is_admin_or_manager(current_user))
+        is_admin = (permissions.is_admin(current_user))
         for attr, value in validated_data.items():
             if (attr in self.only_admin_editable_fields and
-                    not is_admin_or_manager):
+                    not is_admin):
                 continue
             elif attr == 'password':
                 instance.set_password(value)
+            elif attr == 'group' and value and is_admin:
+                group = Group.objects.get(name=value)
+                instance.groups.set([group])
             else:
                 setattr(instance, attr, value)
         instance.save()
