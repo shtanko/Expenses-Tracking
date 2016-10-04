@@ -63,7 +63,11 @@ class UserTests(APITestCase):
         """
         Visitor can create only a regular user account.
         """
+
+        # Url to what bounded an account creation.
         url = reverse('users:list_and_create')
+
+        # Describing that we want to register account with admin privileges.
         data = {
             'username': 'mary',
             'password': 'mary',
@@ -72,12 +76,16 @@ class UserTests(APITestCase):
             'last_name': 'Jane',
             'group': 'admin_users',
         }
+
+        # But that user actually even not logged in.
         response = self.client.post(url, data)
-        print
-        print(response.data)
-        print(response.content)
+
+        # So it can create an account
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), self.user_count + 1)
+
+        # But that account has regular user permissions
+        # (belongs to regular_users group).
         self.assertEqual(
             response.data['groups'], [unicode(self.regular_users_group)]
         )
