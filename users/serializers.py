@@ -87,7 +87,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             group_name = validated_data.get('group')
             if is_admin and group_name:
                 group = Group.objects.get(name=group_name)
-                user.group.set([group])
+                user.groups.set([group])
         return user
 
     def update(self, instance, validated_data):
