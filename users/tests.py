@@ -59,14 +59,68 @@ class UserTests(APITestCase):
         cls.manager_client.login(username='manager', password='manager')
         cls.regular_user_client.login(username='regular', password='regular')
 
-    def test_visitor_creates_account(self):
+    def test_visitor_creates_regular_user_account(self):
+        """
+        Visitor can create a regular user account but credentials have to
+        contains at least username and password.
+        """
+
+        # An account creation endpoint url.
+        url = reverse('users:list_and_create')
+
+        # User does not have to specify a user group flield. The defaul value
+        # should be a regular_users_group.
+        data = {
+            'username': 'mary',
+            'password': 'mary',
+            # 'email': 'mary@email.com',
+            # 'first_name': 'Mary',
+            # 'last_name': 'Jane',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), self.user_count + 1)
+        self.assertEqual(
+            response.data['groups'], [unicode(self.regular_users_group)]
+        )
+
+    def test_visitor_attemps_to_create_account_without_password(self):
+        """
+        Visitor have to pass at least username and password to create an
+        account.
+        """
+        url = reverse('users:list_and_create')
+        data = {
+            'username': 'mary'
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.data.get('password'),
+            [u'This field is required.']
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_visitor_attemps_to_create_account_without_username(self):
+        """
+        Visitor have to pass at least username and password to create an
+        account.
+        """
+        url = reverse('users:list_and_create')
+        data = {
+            'password': 'mary'
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.data.get('username'),
+            [u'This field is required.']
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_visitor_tries_to_create_an_admin_account(self):
         """
         Visitor can create only a regular user account.
         """
-
-        # Url to what bounded an account creation.
         url = reverse('users:list_and_create')
-
         # Describing that we want to register account with admin privileges.
         data = {
             'username': 'mary',
@@ -76,41 +130,51 @@ class UserTests(APITestCase):
             'last_name': 'Jane',
             'group': 'admin_users',
         }
-
-        # But that user actually even not logged in.
         response = self.client.post(url, data)
-
-        # So it can create an account
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), self.user_count + 1)
-
-        # But that account has regular user permissions
-        # (belongs to regular_users group).
         self.assertEqual(
-            response.data['groups'], [unicode(self.regular_users_group)]
+            response.data.get('groups'), [unicode(self.regular_users_group)]
         )
 
-    def test_manager_creates_account(self):
+    def test_username_alredy_exists(self):
         """
-        Manager can create only a regular user account.
+        Username have to be unique.
         """
-        pass
+        username = self.regular_user.username
+        url = reverse('users:list_and_create')
+        data = {
+            'username': username,
+            'password': 'some_password',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(
+            response.data.get('username'),
+            [u'A user with that username already exists.']
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_admin_creates_account(self):
-        """
-        Admin can create user account and grant them manager or admin
-        privileges.
-        """
-        pass
+    # def test_manager_creates_account(self):
+    #     """
+    #     Manager can create only a regular user account.
+    #     """
+    #     pass
 
-    def test_only_admin_can_change_user_group(self):
-        """
-        Only user with admin privileges can manage user group.
-        """
-        pass
+    # def test_admin_creates_account(self):
+    #     """
+    #     Admin can create user account and grant them manager or admin
+    #     privileges.
+    #     """
+    #     pass
 
-    def test_regular_users_can_not_access_to_the_user_list(self):
-        """
-        Regular users has no access to get a list of users.
-        """
-        pass
+    # def test_only_admin_can_change_user_group(self):
+    #     """
+    #     Only user with admin privileges can manage user group.
+    #     """
+    #     pass
+
+    # def test_regular_users_can_not_access_to_the_user_list(self):
+    #     """
+    #     Regular users has no access to get a list of users.
+    #     """
+    #     pass
