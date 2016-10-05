@@ -84,6 +84,27 @@ class UserTests(APITestCase):
             response.data['groups'], [unicode(self.regular_users_group)]
         )
 
+    def test_visitor_creates_full_regular_user_account(self):
+        """
+        Visitor can create a regular user account but credentials may to
+        contains with username and password an email, user first_naem and user
+        last_name.
+        """
+        url = reverse('users:list_and_create')
+        data = {
+            'username': 'mary',
+            'password': 'mary',
+            'email': 'mary@email.com',
+            'first_name': 'Mary',
+            'last_name': 'Jane',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), self.user_count + 1)
+        self.assertEqual(
+            response.data['groups'], [unicode(self.regular_users_group)]
+        )
+
     def test_visitor_attemps_to_create_account_without_password(self):
         """
         Visitor have to pass at least username and password to create an
@@ -121,7 +142,6 @@ class UserTests(APITestCase):
         Visitor can create only a regular user account.
         """
         url = reverse('users:list_and_create')
-        # Describing that we want to register account with admin privileges.
         data = {
             'username': 'mary',
             'password': 'mary',
@@ -129,6 +149,26 @@ class UserTests(APITestCase):
             'first_name': 'Mary',
             'last_name': 'Jane',
             'group': 'admin_users',
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(User.objects.count(), self.user_count + 1)
+        self.assertEqual(
+            response.data.get('groups'), [unicode(self.regular_users_group)]
+        )
+
+    def test_visitor_tries_to_create_a_manager_account(self):
+        """
+        Visitor can create only a regular user account.
+        """
+        url = reverse('users:list_and_create')
+        data = {
+            'username': 'mary',
+            'password': 'mary',
+            'email': 'mary@email.com',
+            'first_name': 'Mary',
+            'last_name': 'Jane',
+            'group': 'manager_users',
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -154,11 +194,11 @@ class UserTests(APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # def test_manager_creates_account(self):
-    #     """
-    #     Manager can create only a regular user account.
-    #     """
-    #     pass
+    def test_manager_creates_regular_user_account(self):
+        """
+        Manager can create only a regular user account.
+        """
+        pass
 
     # def test_admin_creates_account(self):
     #     """
