@@ -64,20 +64,27 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password'],
-            first_name=validated_data['first_name'],
-            last_name=validated_data['last_name']
+            username=validated_data.get('username'),
+            password=validated_data.get('password'),
         )
+
+        # Not required fields:
+        if 'email' in validated_data:
+            user.email = validated_data.get('email')
+        if 'first_name' in validated_data:
+            user.first_name = validated_data.get('first_name'),
+        if 'last_name' in validated_data:
+            user.last_name = validated_data.get('last_name'),
+
         # Each new user has permissions of the regular users.
         regular_users = Group.objects.get(name='regular_users')
         user.groups.set([regular_users])
+
         # But admin can create user with custom permissions
-        current_user = validated_data['current_user']
+        current_user = validated_data.get('current_user')
         if current_user:
             is_admin = (permissions.is_admin(current_user))
-            group_name = validated_data['group']
+            group_name = validated_data.get('group')
             if is_admin and group_name:
                 group = Group.objects.get(name=group_name)
                 user.group.set([group])
