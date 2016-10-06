@@ -12,7 +12,7 @@ class VisitorCreateAccountTests(APITestCase):
     to create user account.
     """
     def setUp(self):
-        self.current_user = self.client
+        self.current_client = self.client
 
     @classmethod
     def setUpTestData(cls):
@@ -68,25 +68,18 @@ class VisitorCreateAccountTests(APITestCase):
         Visitor can create a regular user account but credentials have to
         contains at least username and password.
         """
-
-        # An account creation endpoint url.
         url = reverse('users:list_and_create')
-
-        # User does not have to specify a user group flield. The defaul value
-        # should be a regular_users_group.
         data = {
             'username': 'mary',
             'password': 'mary',
-            # 'email': 'mary@email.com',
-            # 'first_name': 'Mary',
-            # 'last_name': 'Jane',
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
+        user_id = response.data.get('id')
+        user_groups = User.objects.get(pk=user_id).groups.all()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), self.user_count + 1)
-        self.assertEqual(
-            response.data['groups'], [unicode(self.regular_users_group)]
-        )
+        self.assertEqual(user_groups.count(), 1)
+        self.assertEqual(user_groups.get(), self.regular_users_group)
 
     def test_creates_full_regular_user_account(self):
         """
@@ -102,12 +95,13 @@ class VisitorCreateAccountTests(APITestCase):
             'first_name': 'Mary',
             'last_name': 'Jane',
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
+        user_id = response.data.get('id')
+        user_groups = User.objects.get(pk=user_id).groups.all()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), self.user_count + 1)
-        self.assertEqual(
-            response.data['groups'], [unicode(self.regular_users_group)]
-        )
+        self.assertEqual(user_groups.count(), 1)
+        self.assertEqual(user_groups.get(), self.regular_users_group)
 
     def test_attemps_to_create_account_without_password(self):
         """
@@ -118,7 +112,7 @@ class VisitorCreateAccountTests(APITestCase):
         data = {
             'username': 'mary'
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(
             response.data.get('password'),
             [u'This field is required.']
@@ -134,7 +128,7 @@ class VisitorCreateAccountTests(APITestCase):
         data = {
             'password': 'mary'
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(
             response.data.get('username'),
             [u'This field is required.']
@@ -152,14 +146,15 @@ class VisitorCreateAccountTests(APITestCase):
             'email': 'mary@email.com',
             'first_name': 'Mary',
             'last_name': 'Jane',
-            'group': 'admin_users',
+            'groups': [self.admins_group.id],
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
+        user_id = response.data.get('id')
+        user_groups = User.objects.get(pk=user_id).groups.all()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), self.user_count + 1)
-        self.assertEqual(
-            response.data.get('groups'), [unicode(self.regular_users_group)]
-        )
+        self.assertEqual(user_groups.count(), 1)
+        self.assertEqual(user_groups.get(), self.regular_users_group)
 
     def test_attempt_to_create_a_manager_account(self):
         """
@@ -172,14 +167,15 @@ class VisitorCreateAccountTests(APITestCase):
             'email': 'mary@email.com',
             'first_name': 'Mary',
             'last_name': 'Jane',
-            'group': 'manager_users',
+            'groups': [self.managers_group.id],
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
+        user_id = response.data.get('id')
+        user_groups = User.objects.get(pk=user_id).groups.all()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), self.user_count + 1)
-        self.assertEqual(
-            response.data.get('groups'), [unicode(self.regular_users_group)]
-        )
+        self.assertEqual(user_groups.count(), 1)
+        self.assertEqual(user_groups.get(), self.regular_users_group)
 
     def test_username_alredy_exists(self):
         """
@@ -191,7 +187,7 @@ class VisitorCreateAccountTests(APITestCase):
             'username': username,
             'password': 'some_password',
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(
             response.data.get('username'),
             [u'A user with that username already exists.']
@@ -204,7 +200,19 @@ class AdminCreateAccountTests(VisitorCreateAccountTests):
     Admins have all access to the user accounts.
     """
     def setUp(self):
-        self.current_user = self.admin_client
+        self.current_client = self.admin_client
+
+    def test_attemps_to_create_account_without_password(self):
+        """
+        Admin can create account without password. In this case the password
+        will be username.
+        """
+        url = reverse('users:list_and_create')
+        data = {
+            'username': 'mary'
+        }
+        response = self.current_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_attempt_to_create_an_admin_account(self):
         """
@@ -217,14 +225,15 @@ class AdminCreateAccountTests(VisitorCreateAccountTests):
             'email': 'mary@email.com',
             'first_name': 'Mary',
             'last_name': 'Jane',
-            'group': 'admin_users',
+            'groups': [self.admins_group.id],
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
+        user_id = response.data.get('id')
+        user_groups = User.objects.get(pk=user_id).groups.all()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), self.user_count + 1)
-        self.assertEqual(
-            response.data.get('groups'), [unicode(self.admins_group)]
-        )
+        self.assertEqual(user_groups.count(), 1)
+        self.assertEqual(user_groups.get(), self.admins_group)
 
     def test_attempt_to_create_a_manager_account(self):
         """
@@ -237,14 +246,15 @@ class AdminCreateAccountTests(VisitorCreateAccountTests):
             'email': 'mary@email.com',
             'first_name': 'Mary',
             'last_name': 'Jane',
-            'group': 'manager_users',
+            'groups': [self.managers_group.id],
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
+        user_id = response.data.get('id')
+        user_groups = User.objects.get(pk=user_id).groups.all()
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(User.objects.count(), self.user_count + 1)
-        self.assertEqual(
-            response.data.get('groups'), [unicode(self.managers_group)]
-        )
+        self.assertEqual(user_groups.count(), 1)
+        self.assertEqual(user_groups.get(), self.managers_group)
 
 
 class ManagerCreateAccountTests(VisitorCreateAccountTests):
@@ -255,7 +265,19 @@ class ManagerCreateAccountTests(VisitorCreateAccountTests):
     Managers can create a regular but not manager or admin user accounts.
     """
     def setUp(self):
-        self.current_user = self.manager_client
+        self.current_client = self.manager_client
+
+    def test_attemps_to_create_account_without_password(self):
+        """
+        Manager can create account without password. In this case the password
+        will be username.
+        """
+        url = reverse('users:list_and_create')
+        data = {
+            'username': 'mary'
+        }
+        response = self.current_client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class RegularUserCreateAccountTests(VisitorCreateAccountTests):
@@ -266,7 +288,7 @@ class RegularUserCreateAccountTests(VisitorCreateAccountTests):
     Regular user can not create new user accounts while he's logged in.
     """
     def setUp(self):
-        self.current_user = self.regular_user_client
+        self.current_client = self.regular_user_client
 
     def test_creates_regular_user_account(self):
         url = reverse('users:list_and_create')
@@ -274,7 +296,7 @@ class RegularUserCreateAccountTests(VisitorCreateAccountTests):
             'username': 'mary',
             'password': 'mary',
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_creates_full_regular_user_account(self):
@@ -286,7 +308,7 @@ class RegularUserCreateAccountTests(VisitorCreateAccountTests):
             'first_name': 'Mary',
             'last_name': 'Jane',
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_attemps_to_create_account_without_password(self):
@@ -294,7 +316,7 @@ class RegularUserCreateAccountTests(VisitorCreateAccountTests):
         data = {
             'username': 'mary'
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_attemps_to_create_account_without_username(self):
@@ -302,7 +324,7 @@ class RegularUserCreateAccountTests(VisitorCreateAccountTests):
         data = {
             'password': 'mary'
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_attempt_to_create_an_admin_account(self):
@@ -313,9 +335,8 @@ class RegularUserCreateAccountTests(VisitorCreateAccountTests):
             'email': 'mary@email.com',
             'first_name': 'Mary',
             'last_name': 'Jane',
-            'group': 'admin_users',
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_attempt_to_create_a_manager_account(self):
@@ -326,9 +347,8 @@ class RegularUserCreateAccountTests(VisitorCreateAccountTests):
             'email': 'mary@email.com',
             'first_name': 'Mary',
             'last_name': 'Jane',
-            'group': 'manager_users',
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_username_alredy_exists(self):
@@ -338,7 +358,7 @@ class RegularUserCreateAccountTests(VisitorCreateAccountTests):
             'username': username,
             'password': 'some_password',
         }
-        response = self.current_user.post(url, data)
+        response = self.current_client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     # def test_only_admin_can_change_user_group(self):
