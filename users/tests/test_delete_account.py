@@ -6,10 +6,10 @@ from rest_framework.test import APITestCase, APIClient
 from users.models import User
 
 
-class VisitorReadAccountTests(APITestCase):
+class VisitorDeleteAccountTests(APITestCase):
     """
     This TestCate is created to test visitor permissions and restrictions
-    to read user account.
+    to delete user account.
     """
     def setUp(self):
         self.current_client = self.client
@@ -89,125 +89,85 @@ class VisitorReadAccountTests(APITestCase):
         cls.dublicate_manager_user.groups.set([cls.managers_group])
         cls.dublicate_regular_user.groups.set([cls.regular_users_group])
 
-    def test_read_regular_user_account(self):
-        """
-        Visitor can not read any information until get registered or logged in.
-        """
+    def test_delete_regular_user_account(self):
         url = reverse(
             'users:detail',
             kwargs={'pk': self.dublicate_regular_user.id}
         )
-        response = self.current_client.get(url)
+        response = self.current_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_read_manager_user_account(self):
-        """
-        Visitor can not read any information until get registered or logged in.
-        """
+    def test_delete_manager_account(self):
         url = reverse(
             'users:detail',
             kwargs={'pk': self.dublicate_manager_user.id}
         )
-        response = self.current_client.get(url)
+        response = self.current_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_read_admin_user_account(self):
-        """
-        Visitor can not read any information until get registered or logged in.
-        """
+    def test_delete_admin_account(self):
         url = reverse(
             'users:detail',
             kwargs={'pk': self.dublicate_admin_user.id}
         )
-        response = self.current_client.get(url)
+        response = self.current_client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_read_self_account(self):
-        """
-        Visitor can not read any information until get registered or logged in.
-        """
+    def test_delete_self_account(self):
         pass
 
-    def test_read_user_list(self):
-        """
-        Visitor can not read any information until get registered or logged in.
-        """
-        url = reverse('users:list_and_create',)
-        response = self.current_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-
-class RegularUserReadTests(VisitorReadAccountTests):
+class RegularUserDeleteTests(VisitorDeleteAccountTests):
     """
-    Regular user can read only self account information.
+    Regular users can delete only self account.
     """
     def setUp(self):
         self.current_client = self.regular_user_client
 
-    def test_read_self_account(self):
-        """
-        Visitor can not read any information until get registered or logged in.
-        """
+    def test_delete_self_account(self):
         url = reverse(
             'users:detail',
             kwargs={'pk': self.regular_user.id}
         )
-        response = self.current_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.current_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
-class ManagerReadTests(RegularUserReadTests):
+class ManagerDeleteTests(RegularUserDeleteTests):
     """
-    Managers can read any user information.
+    Manager can delete regular user accounts.
     """
     def setUp(self):
         self.current_client = self.manager_client
 
-    def test_read_regular_user_account(self):
-        """
-        Manager can read any user information.
-        """
+    def test_delete_regular_user_account(self):
         url = reverse(
             'users:detail',
             kwargs={'pk': self.dublicate_regular_user.id}
         )
-        response = self.current_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.current_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_read_manager_user_account(self):
-        """
-        Manager can read any user information.
-        """
+
+class AdminDeleteTests(ManagerDeleteTests):
+    """
+    Admin can delete any user account.
+    """
+    def setUp(self):
+        self.current_client = self.admin_client
+
+    def test_delete_manager_account(self):
         url = reverse(
             'users:detail',
             kwargs={'pk': self.dublicate_manager_user.id}
         )
-        response = self.current_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.current_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_read_admin_user_account(self):
-        """
-        Manager can read any user information.
-        """
+    def test_delete_admin_account(self):
         url = reverse(
             'users:detail',
             kwargs={'pk': self.dublicate_admin_user.id}
         )
-        response = self.current_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_read_user_list(self):
-        """
-        Manager can read any user information.
-        """
-        url = reverse('users:list_and_create',)
-        response = self.current_client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-class AdminReadTests(ManagerReadTests):
-    """
-    Managers can read any user information.
-    """
-    def setUp(self):
-        self.current_client = self.admin_client
+        response = self.current_client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
