@@ -1,5 +1,3 @@
-from django.contrib.auth.models import Group
-
 from rest_framework import viewsets
 
 from users.models import User
@@ -22,25 +20,26 @@ class UserViewSet(viewsets.ModelViewSet):
             return user_serializers.RegularUserSerializer
 
     def perform_create(self, serializer):
+        instance = serializer.save()
+
         current_user = self.request.user
         is_admin = user_permissions.is_admin(current_user)
-        instance = serializer.save()
-        new_password = instance.password
-        if new_password:
-            instance.set_password(new_password)
         if not is_admin:
-            regular_users_group = Group.objects.get(name='regular_users')
-            instance.groups.set([regular_users_group])
+            user_permissions.set_regular_user_permissions_to(instance)
+        instance.set_password(instance.password)
+
         instance.save()
 
     def perform_update(self, serializer):
-        current_user = self.request.user
-        is_admin = user_permissions.is_admin(current_user)
         instance = serializer.save()
-        new_password = instance.password
-        if new_password:
-            instance.set_password(new_password)
-        if not is_admin:
-            regular_users_group = Group.objects.get(name='regular_users')
-            instance.groups.set([regular_users_group])
+
+        current_user = self.request.user
+        is_current_user_admin = user_permissions.is_admin(current_user)
+        if not is_current_user_admin:
+            user_permissions.set_regular_user_permissions_to(instance)
+
+        if is_current_user_admin \
+                or not user_permissions.is_admin_or_manager(instance):
+            instance.set_password(instance.password)
+
         instance.save()

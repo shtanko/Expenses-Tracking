@@ -1,4 +1,6 @@
 from django.db.models import Q
+from django.contrib.auth.models import Group
+
 from rest_framework.permissions import BasePermission
 
 
@@ -10,6 +12,16 @@ def is_admin_or_manager(user):
 
 def is_admin(user):
     return user.groups.filter(name='admin_users').exists()
+
+
+def is_manager(user):
+    return user.groups.filter(name='manager_users').exists()
+
+
+def set_regular_user_permissions_to(user):
+    regular_users_group = Group.objects.get(name='regular_users')
+    user.groups.set([regular_users_group])
+    user.save()
 
 
 class UserPermission(BasePermission):
@@ -47,7 +59,9 @@ class UserPermission(BasePermission):
             else:
                 # And only admins or user managers can CRUD another
                 # accounts.
-                if is_admin_or_manager(user):
+                if is_manager(user) and not is_admin_or_manager(obj):
+                    return True
+                if is_admin(user):
                     return True
         else:
             # If user does not authenticated it can only create new instance
