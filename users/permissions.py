@@ -50,15 +50,12 @@ class UserPermission(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         user = request.user
-
-        # Object permissions granted only to authenticated users.
         if user.is_authenticated():
-            # Each user can CRUD his own account.
             if user == obj:
                 return True
             else:
-                # And only admins or user managers can CRUD another
-                # accounts.
+                if view.action == 'retrieve' and is_admin_or_manager(user):
+                    return True
                 if is_manager(user) and not is_admin_or_manager(obj):
                     return True
                 if is_admin(user):
