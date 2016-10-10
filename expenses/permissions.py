@@ -1,9 +1,12 @@
-from rest_framework import permissions
-from users import permissions
+from rest_framework import permissions as drf_perm
+from users import permissions as user_perm
 
 
-class IsOwnerOrAdmin(permissions.BasePermission):
+class ExpensePermissions(drf_perm.IsAuthenticated):
     def has_object_permission(self, request, view, obj):
-        user = request.user
-        is_admin = permissions.is_admin(user)
-        return obj.owner == user or is_admin
+        current_user = request.user
+        if user_perm.is_admin(current_user):
+            return True
+        else:
+            return current_user == obj.owner
+        return False
