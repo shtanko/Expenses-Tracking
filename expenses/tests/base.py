@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase, APIClient
 
 from users.models import User
 from expenses.models import Expense
@@ -21,7 +21,7 @@ def get_expense_ids_from_response(response):
     return set(res)
 
 
-class CreateDataMethodsForTestCase(object):
+class CreateDataMethods(object):
     """
     Methods for creating data for setUpTestData method.
     """
@@ -137,3 +137,20 @@ class CreateDataMethodsForTestCase(object):
                     owner=user
                 )
                 exp_item.save()
+
+
+class APITestCaseWithTestData(APITestCase, CreateDataMethods):
+    @classmethod
+    def setUpTestData(cls):
+        cls.create_user_groups()
+        cls.create_user_clients()
+        cls.login_user_clients()
+        cls.create_more_users()
+
+        cls.user_count = User.objects.count()
+
+        cls.default_item_number = 5
+        cls.create_expenses(
+            userlist=cls.main_users + cls.another_users,
+            number=cls.default_item_number
+        )

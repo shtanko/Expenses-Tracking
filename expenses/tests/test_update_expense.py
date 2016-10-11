@@ -1,33 +1,16 @@
 from django.urls import reverse
 
 from rest_framework import status
-from rest_framework.test import APITestCase
-
-from users.models import User
 
 from expenses.models import Expense
-from expenses.tests.base import CreateDataMethodsForTestCase, \
+from expenses.tests.base import APITestCaseWithTestData, \
     get_expense_ids_from_user
 
 
-class VisitorUpdateExpenseTests(APITestCase, CreateDataMethodsForTestCase):
+class VisitorUpdateExpenseTests(APITestCaseWithTestData):
     """
     Visitor can not update any Expense objects.
     """
-    @classmethod
-    def setUpTestData(cls):
-        cls.create_user_groups()
-        cls.create_user_clients()
-        cls.login_user_clients()
-        cls.create_more_users()
-
-        cls.user_count = User.objects.count()
-
-        cls.default_item_number = 5
-        cls.create_expenses(
-            userlist=cls.main_users + cls.another_users,
-            number=cls.default_item_number
-        )
 
     def setUp(self):
         self.current_client = self.client

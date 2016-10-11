@@ -1,15 +1,14 @@
 from django.urls import reverse
 
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 from users.models import User
 from expenses.models import Expense
 
-from expenses.tests.base import CreateDataMethodsForTestCase
+from expenses.tests.base import APITestCaseWithTestData
 
 
-class VisitorCreateExpenseTests(APITestCase, CreateDataMethodsForTestCase):
+class VisitorCreateExpenseTests(APITestCaseWithTestData):
     """
     Visitor can not create any Expense object because they have to be bounded
     to the user who created them.
