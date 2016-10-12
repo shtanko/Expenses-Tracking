@@ -1,11 +1,7 @@
 from django.urls import reverse
 
 from rest_framework import status
-from rest_framework.test import APITestCase
 
-from users.models import User
-
-from expenses.models import Expense
 from expenses.tests.base import APITestCaseWithTestData, \
     get_expense_ids_from_user
 
