@@ -19,32 +19,52 @@
 		<![endif]-->
 	</head>
 	<body>
-		<form method="POST" id="registration_form" action="javascript:void(null);" onsubmit="registration_post()">
-			{% csrf_token %}
-			<legend>Registration Form</legend>
-			<div>
-				<label for="username">Username:</label>
-				<input id="username" name="username" value="" type="text">
-			</div>
-			<div>
-				<label for="email">Email:</label>
-				<input id="email" name="email" value="" type="email">
-			</div>
-			<div>
-				<label for="password">Password:</label>
-				<input id="password" name="password" value="" type="password">
-			</div>
-			<div>
-				<label for="first_name">First name:</label>
-				<input id="first_name" name="first_name" value="" type="text">
-			</div>
-			<div>
-				<label for="last_name">Last name:</label>
-				<input id="last_name" name="last_name" value="" type="text">
-			</div>
-			<input value="Send" type="submit">
-		</form>
-		<h1 id="results"></h1>
+		<div id="registration-form-container">
+			<form id="registration-form" action="javascript:void(null);" onsubmit="registration_post()">
+				{% csrf_token %}
+				<legend>Registration Form</legend>
+				<div>
+					<label for="registration-username">Username:</label>
+					<input id="registration-username" name="username" value="" type="text">
+				</div>
+				<div>
+					<label for="email">Email:</label>
+					<input id="email" name="email" value="" type="email">
+				</div>
+				<div>
+					<label for="registration-password">Password:</label>
+					<input id="registration-password" name="password" value="" type="password">
+				</div>
+				<div>
+					<label for="first_name">First name:</label>
+					<input id="first_name" name="first_name" value="" type="text">
+				</div>
+				<div>
+					<label for="last_name">Last name:</label>
+					<input id="last_name" name="last_name" value="" type="text">
+				</div>
+				<input value="Send" type="submit">
+			</form>
+			<button type="button" onclick="hide_reg_show_login_form()">Go to Login</button>
+			<div id="registration-results"></div>
+		</div>
+		<div id="login-form-container" style="display:none">
+			<form id="login-form" action="javascript:void(null);" onsubmit="login_post()">
+				{% csrf_token %}
+				<legend>Login form</legend>
+				<div>
+					<label for="login-username">Username:</label>
+					<input id="login-username" name="username" value="" type="text">
+				</div>
+				<div>
+					<label for="login-password">Password:</label>
+					<input id="login-password" name="password" value="" type="password">
+				</div>
+				<input value="Send" type="submit">
+			</form>
+			<button type="button" onclick="hide_login_form_show_reg()">Go to Registration</button>
+			<div id="login-results"></div>
+		</div>
 		<!-- jQuery -->
 		<script src="{% static 'static/libs/jquery/jquery-3.1.0.min.js' %}"></script>
 		<!-- User JS -->

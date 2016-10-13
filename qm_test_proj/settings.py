@@ -28,6 +28,8 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 
+LOGIN_REDIRECT_URL = '/expenses/'
+
 # Application definition
 
 INSTALLED_APPS = [
