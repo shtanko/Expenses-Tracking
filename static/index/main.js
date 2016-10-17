@@ -37,24 +37,24 @@ function setUpUserExpenses(user) {
 	$('#user-expenses').css("display", "block");
 	if (('groups' in user) && (user.groups[0] == 3)) {
 		ReactDOM.render(
-			<AdminExpenseBox get_expenses_url={expenses_url} />,
+			<AdminExpenseBox expensesUrl={expensesUrl} />,
 			document.getElementById('user-expenses')
 		);
 	} else {
 		ReactDOM.render(
-			<ExpenseBox get_expenses_url={expenses_url} />,
+			<ExpenseBox expensesUrl={expensesUrl} />,
 			document.getElementById('user-expenses')
 		);
 	}
 }
 
-function getUserData(url_to_user) {
+function getUserData(urlToCurrentUserObj) {
 	// Attempt to get user object
-	console.log(url_to_user)
+	console.log(urlToCurrentUserObj)
 	var user;
-	if (url_to_user !== undefined) {
+	if (urlToCurrentUserObj !== undefined) {
 		$.get({
-			url: url_to_user,
+			url: urlToCurrentUserObj,
 			dataType: 'json',
 			success: function(user) {
 				// If we've got user object, then we can set up this user expenses.
@@ -74,7 +74,7 @@ function getUserData(url_to_user) {
 
 function setUpUserData() {
 	// Attempt to get url to the current user object
-	var url_to_user;
+	var urlToCurrentUserObj;
 	$.get({
 		url: '/users/get_self_url/',
 		dataType: 'json',
@@ -90,11 +90,11 @@ function setUpUserData() {
 			console.log(xhr);
 		}
 	});
-	return url_to_user;
+	return urlToCurrentUserObj;
 }
 
 var users_url;
-var expenses_url;
+var expensesUrl;
 
 function login_post() {
 	var msg = $('#login-form').serialize();
@@ -111,7 +111,7 @@ function login_post() {
 				console.log('You have been successfully logged in.');
 				console.log(data);
 				users_url = data['users'];
-				expenses_url = data['expenses'];
+				expensesUrl = data['expenses'];
 				setUpUserData();
 			} else {
 				console.log('Some unnormal errors have been occured. Here is your data:');

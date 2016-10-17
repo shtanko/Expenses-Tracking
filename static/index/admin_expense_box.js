@@ -1,8 +1,9 @@
-var ExpenseItem = React.createClass({
-	render: function() {
+var AdminExpenseItem = React.createClass({
+	render() {
 		return (
 			<tr>
 				<td>{this.props.id}</td>
+				<td>{this.props.owner}</td>
 				<td>{this.props.name}</td>
 				<td>{this.props.descr}</td>
 				<td>{this.props.value}</td>
@@ -12,13 +13,14 @@ var ExpenseItem = React.createClass({
 	}
 });
 
-var ExpenseList = React.createClass({
+var AdminExpenseList = React.createClass({
 	render: function() {
 		var expenseNodes = this.props.data.map(function(expense) {
 			return (
-				<ExpenseItem 
-					key={expense.id} 
-					id={expense.id} 
+				<AdminExpenseItem 
+					key={expense.id}
+					id={expense.id}
+					owner={expense.owner}
 					name={expense.name} 
 					descr={expense.descr} 
 					value={expense.value} 
@@ -28,11 +30,12 @@ var ExpenseList = React.createClass({
 		});
 		return (
 			<div>
-				<h3>Your expenses</h3>
+				<h3>User expenses</h3>
 				<table>
 					<thead>
 						<tr>
 							<th>ID</th>
+							<th>Owner</th>
 							<th>Name</th>
 							<th>Description</th>
 							<th>Value</th>
@@ -48,9 +51,12 @@ var ExpenseList = React.createClass({
 	}
 });
 
-var CreateExpenseForm = React.createClass({
+var AdminCreateExpenseForm = React.createClass({
 	getInitialState() {
-		return {name: '', descr: '', value: ''};
+		return {owner: 0, name: '', descr: '', value: ''};
+	},
+	handleOwnerChange(e) {
+		this.setState({owner: e.target.value});
 	},
 	handleNameChange(e) {
 		this.setState({name: e.target.value});
@@ -63,24 +69,32 @@ var CreateExpenseForm = React.createClass({
 	},
 	handleSubmit(e) {
 		e.preventDefault();
+		var owner = this.state.owner;
 		var name = this.state.name.trim();
 		var descr = this.state.descr.trim();
 		var value = this.state.value.trim();
-		if (!name || !value) {
+		if (!(owner && name && value)) {
 			return;
 		}
 		this.props.onCreateExpenseSubmit({
+			owner: owner,
 			name: name,
 			descr: descr,
 			value: value
 		});
-		this.setState({name: '', descr: '', value: ''});
+		this.setState({owner: 0, name: '', descr: '', value: ''});
 	},
 	render() {
 		return (
 			<div>
 				<h3>Create expense form</h3>
 				<form onSubmit={this.handleSubmit} >
+					<input 
+						type="number"
+						name="owner"
+						onChange={this.handleOwnerChange}
+						value={this.state.owner}
+					/>
 					<input 
 						type="text" 
 						name="name" 
@@ -109,9 +123,9 @@ var CreateExpenseForm = React.createClass({
 	}
 });
 
-var UpdateExpenseForm = React.createClass({
+var AdminUpdateExpenseForm = React.createClass({
 	getInitialState() {
-		return {id: 0, name: '', descr: '', value: ''};
+		return {id: 0, owner: 0, name: '', descr: '', value: ''};
 	},
 	getObjectById(id) {
 		for (var i = this.props.data.length - 1; i >= 0; i--) {
@@ -123,9 +137,13 @@ var UpdateExpenseForm = React.createClass({
 	handleIdChange(e) {
 		this.setState({id: e.target.value});
 		var item = this.getObjectById(e.target.value);
+		this.setState({owner: item.owner});
 		this.setState({name: item.name});
 		this.setState({descr: item.descr});
 		this.setState({value: item.value});
+	},
+	handleOwnerChange(e) {
+		this.setState({owner: e.target.value});
 	},
 	handleNameChange(e) {
 		this.setState({name: e.target.value});
@@ -139,19 +157,21 @@ var UpdateExpenseForm = React.createClass({
 	handleSubmit(e) {
 		e.preventDefault();
 		var id = this.state.id;
+		var owner = this.state.owner;
 		var name = this.state.name.trim();
 		var descr = this.state.descr.trim();
 		var value = this.state.value.trim();
-		if (!(id && name && value)) {
+		if (!(id && owner && name && value)) {
 			return;
 		}
 		this.props.onUpdateExpenseSubmit({
 			id: id,
+			owner: owner,
 			name: name,
 			descr: descr,
 			value: value
 		});
-		this.setState({id: 0, name: '', descr: '', value: ''});
+		this.setState({id: 0, owner: 0, name: '', descr: '', value: ''});
 	},
 	render() {
 		return (
@@ -163,6 +183,12 @@ var UpdateExpenseForm = React.createClass({
 						name="id" 
 						onChange={this.handleIdChange}
 						value={this.state.id}
+					/>
+					<input 
+						type="number"
+						name="owner"
+						onChange={this.handleOwnerChange}
+						value={this.state.owner}
 					/>
 					<input 
 						type="text" 
@@ -185,14 +211,14 @@ var UpdateExpenseForm = React.createClass({
 						onChange={this.handleValueChange}
 						value={this.state.value}
 					/>
-					<input type="submit" value="Update expense" />
+					<input type="submit" value="Create expense" />
 				</form>
 			</div>
 		);
 	}
 });
 
-var ExpenseBox = React.createClass({
+var AdminExpenseBox = React.createClass({
 	getInitialState() {
 		return {data: []};
 	},
@@ -201,6 +227,7 @@ var ExpenseBox = React.createClass({
 	},
 	handleCreateExpenseSubmit(expense) {
 		postExpense(this, expense);
+		getExpenseList(this, this.props.expensesUrl)
 	},
 	handleUpdateExpenseSubmit(expense) {
 		putExpense(this, expense);
@@ -208,14 +235,14 @@ var ExpenseBox = React.createClass({
 	render: function() {
 		return (
 			<div>
-				<CreateExpenseForm 
+				<AdminCreateExpenseForm 
 					onCreateExpenseSubmit={this.handleCreateExpenseSubmit} 
 				/>
-				<UpdateExpenseForm 
+				<AdminUpdateExpenseForm 
 					data={this.state.data}
 					onUpdateExpenseSubmit={this.handleUpdateExpenseSubmit} 
 				/>
-				<ExpenseList data={this.state.data} />
+				<AdminExpenseList data={this.state.data} />
 			</div>
 		);
 	}
