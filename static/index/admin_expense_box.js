@@ -218,6 +218,40 @@ var AdminUpdateExpenseForm = React.createClass({
 	}
 });
 
+var AdminDeleteExpenseForm = React.createClass({
+	getInitialState() {
+		return {id: 0};
+	},
+	handleIdChange(e) {
+		this.setState({id: e.target.value});
+	},
+	handleSubmit(e) {
+		e.preventDefault();
+		var id = this.state.id;
+		if (!id) {
+			return;
+		}
+		this.props.onDeteleExpenseSubmit({id: id});
+		this.setState({id: 0});
+	},
+	render() {
+		return (
+			<div>
+				<h3>Delete expense form</h3>
+				<form onSubmit={this.handleSubmit} >
+					<input
+						type="number"
+						name="id"
+						onChange={this.handleIdChange}
+						value={this.state.id}
+					/>
+					<input type="submit" value="Delete expense" />
+				</form>
+			</div>
+		);
+	}
+});
+
 var AdminExpenseBox = React.createClass({
 	getInitialState() {
 		return {data: []};
@@ -232,6 +266,9 @@ var AdminExpenseBox = React.createClass({
 	handleUpdateExpenseSubmit(expense) {
 		putExpense(this, expense);
 	},
+	handleDeleteExpenseSubmit(expense) {
+		deleteExpense(this, expense);
+	},
 	render: function() {
 		return (
 			<div>
@@ -241,6 +278,9 @@ var AdminExpenseBox = React.createClass({
 				<AdminUpdateExpenseForm 
 					data={this.state.data}
 					onUpdateExpenseSubmit={this.handleUpdateExpenseSubmit} 
+				/>
+				<AdminDeleteExpenseForm
+					onDeteleExpenseSubmit={this.handleDeleteExpenseSubmit}
 				/>
 				<AdminExpenseList data={this.state.data} />
 			</div>

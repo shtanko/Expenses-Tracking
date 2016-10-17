@@ -1,3 +1,24 @@
+function urlToExpense(expensesUrl, expenseId) {
+	return expensesUrl + expenseId + '/'
+}
+
+function getExpenseList(reactObj, expensesUrl) {
+	$.ajax({
+		url: expensesUrl,
+		type: 'GET',
+		dataType: 'json',
+		success: function(data) {
+			reactObj.setState({data: data});
+		}.bind(reactObj),
+		error: function(xhr, status, err) {
+			console.log(xhr);
+			// console.log(status);
+			// console.log(err.toString());
+			// console.error(url_to_expenses, status, err.toString());
+		}.bind(reactObj)
+	});
+}
+
 function postExpense(reactObj, expense) {
 	$.ajax({
 		url: reactObj.props.expensesUrl,
@@ -17,12 +38,8 @@ function postExpense(reactObj, expense) {
 	});
 }
 
-function urlToExpense(expensesUrl, expenseId) {
-	return expensesUrl + expenseId + '/'
-}
-
 function putExpense(reactObj, expense) {
-	var url = urlToExpense(expensesUrl, expense.id)
+	var url = urlToExpense(expensesUrl, expense.id);
 	console.log(url);
 	$.ajax({
 		url: url,
@@ -49,19 +66,29 @@ function putExpense(reactObj, expense) {
 	});
 }
 
-function getExpenseList(reactObj, expensesUrl) {
+function deleteExpense(reactObj, expense) {
+	var url = urlToExpense(expensesUrl, expense.id);
+	var itemId = expense.id;
 	$.ajax({
-		url: expensesUrl,
-		type: 'GET',
+		url: url,
+		type: 'DELETE',
 		dataType: 'json',
+		data: expense,
 		success: function(data) {
+			var data = reactObj.state.data;
+			for (var i = data.length - 1; i >= 0; i--) {
+				if (itemId == data[i].id) {
+					data.splice(i, 1);
+					break;
+				}
+			}
 			reactObj.setState({data: data});
 		}.bind(reactObj),
 		error: function(xhr, status, err) {
 			console.log(xhr);
 			// console.log(status);
 			// console.log(err.toString());
-			// console.error(url_to_expenses, status, err.toString());
+			// console.error(reactObj.props.expensesUrl, status, err.toString());
 		}.bind(reactObj)
 	});
 }

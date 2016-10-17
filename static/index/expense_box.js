@@ -192,6 +192,40 @@ var UpdateExpenseForm = React.createClass({
 	}
 });
 
+var DeleteExpenseForm = React.createClass({
+	getInitialState() {
+		return {id: 0};
+	},
+	handleIdChange(e) {
+		this.setState({id: e.target.value});
+	},
+	handleSubmit(e) {
+		e.preventDefault();
+		var id = this.state.id;
+		if (!id) {
+			return;
+		}
+		this.props.onDeteleExpenseSubmit({id: id});
+		this.setState({id: 0});
+	},
+	render() {
+		return (
+			<div>
+				<h3>Delete expense form</h3>
+				<form onSubmit={this.handleSubmit} >
+					<input
+						type="number"
+						name="id"
+						onChange={this.handleIdChange}
+						value={this.state.id}
+					/>
+					<input type="submit" value="Delete expense" />
+				</form>
+			</div>
+		);
+	}
+});
+
 var ExpenseBox = React.createClass({
 	getInitialState() {
 		return {data: []};
@@ -205,6 +239,9 @@ var ExpenseBox = React.createClass({
 	handleUpdateExpenseSubmit(expense) {
 		putExpense(this, expense);
 	},
+	handleDeleteExpenseSubmit(expense) {
+		deleteExpense(this, expense);
+	},
 	render: function() {
 		return (
 			<div>
@@ -214,6 +251,9 @@ var ExpenseBox = React.createClass({
 				<UpdateExpenseForm 
 					data={this.state.data}
 					onUpdateExpenseSubmit={this.handleUpdateExpenseSubmit} 
+				/>
+				<DeleteExpenseForm
+					onDeteleExpenseSubmit={this.handleDeleteExpenseSubmit}
 				/>
 				<ExpenseList data={this.state.data} />
 			</div>
