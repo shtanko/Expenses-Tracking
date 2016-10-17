@@ -19,6 +19,7 @@
 		<![endif]-->
 	</head>
 	<body>
+		<h2 id="state-message">Please, register a new account or log in.</h2>
 		<div id="registration-form-container">
 			<form id="registration-form" action="javascript:void(null);" onsubmit="registration_post()">
 				{% csrf_token %}
@@ -50,7 +51,7 @@
 		</div>
 		<div id="login-form-container" style="display:none">
 			<form id="login-form" action="javascript:void(null);" onsubmit="login_post()">
-				{% csrf_token %}
+				<!-- {% csrf_token %} -->
 				<legend>Login form</legend>
 				<div>
 					<label for="login-username">Username:</label>
@@ -65,14 +66,29 @@
 			<button type="button" onclick="hide_login_form_show_reg()">Go to Registration</button>
 			<div id="login-results"></div>
 		</div>
+		<div id="user-data" style="display:none"></div>
+		<div id="list-of-users" style="display:none"></div>
 		<div id="user-expenses" style="display:none"></div>
+		<div id="user-logout" style="display:none">
+			<form id="logout-form" action="javascript:void(null);" onclick="logout_post()">
+				<input type="submit" value="Log out">
+			</form>
+ 			<!-- <a href="/auth/logout/?next=/">Log out</a> -->
+ 			<!-- <a href="/auth/logout/">Log out</a> -->
+		</div>
 		<!-- React -->
 		<script src="{% static 'static/libs/react/build/react.js' %}"></script>
 		<script src="{% static 'static/libs/react/build/react-dom.js' %}"></script>
+		<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
 		<!-- jQuery -->
 		<script src="{% static 'static/libs/jquery/jquery-3.1.1.js' %}"></script>
 		<!-- User JS -->
-		<script src="{% static 'static/index.js' %}"></script>
+		<script src="{% static 'static/index/add_csrf_in_request_header.js' %}" type="text/javascript"></script>
+		<script src="{% static 'static/index/expense_box.js' %}" type="text/jsx"></script>
+		<script src="{% static 'static/index/main.js' %}" type="text/jsx"></script>
+		<form>
+			
+		</form>
 		<!-- Bootstrap JavaScript -->
 		<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> -->
 		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
