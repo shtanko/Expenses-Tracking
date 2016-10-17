@@ -1,3 +1,6 @@
+var users_url;
+var expensesUrl;
+
 setCSRFTokenInRequestHeader();
 
 function hide_reg_show_login_form() {
@@ -33,69 +36,6 @@ function registration_post() {
 	});
 }
 
-function setUpUserExpenses(user) {
-	$('#user-expenses').css("display", "block");
-	if (('groups' in user) && (user.groups[0] == 3)) {
-		ReactDOM.render(
-			<AdminExpenseBox expensesUrl={expensesUrl} />,
-			document.getElementById('user-expenses')
-		);
-	} else {
-		ReactDOM.render(
-			<ExpenseBox expensesUrl={expensesUrl} />,
-			document.getElementById('user-expenses')
-		);
-	}
-}
-
-function getUserData(urlToCurrentUserObj) {
-	// Attempt to get user object
-	console.log(urlToCurrentUserObj)
-	var user;
-	if (urlToCurrentUserObj !== undefined) {
-		$.get({
-			url: urlToCurrentUserObj,
-			dataType: 'json',
-			success: function(user) {
-				// If we've got user object, then we can set up this user expenses.
-				setUpUserExpenses(user);
-			},
-			error: function(xhr, status, err) {
-				console.log(xhr);
-			}
-		});
-	}
-	if (user !== undefined) {
-		return user;
-	} else {
-		return false;
-	}
-}
-
-function setUpUserData() {
-	// Attempt to get url to the current user object
-	var urlToCurrentUserObj;
-	$.get({
-		url: '/users/get_self_url/',
-		dataType: 'json',
-		success: function(data) {
-			// If we've got url, next we get attempt to get user object
-			if ('url' in data) {
-				getUserData(data.url);
-			} else {
-				console.log(data);
-			}
-		},
-		error: function(xhr, status, err) {
-			console.log(xhr);
-		}
-	});
-	return urlToCurrentUserObj;
-}
-
-var users_url;
-var expensesUrl;
-
 function login_post() {
 	var msg = $('#login-form').serialize();
 	$.ajax({
@@ -112,7 +52,11 @@ function login_post() {
 				console.log(data);
 				users_url = data['users'];
 				expensesUrl = data['expenses'];
-				setUpUserData();
+				$('#user-data').css("display", "block");
+				ReactDOM.render(
+					<CurrentUserBox/>,
+					document.getElementById('user-data')
+				);
 			} else {
 				console.log('Some unnormal errors have been occured. Here is your data:');
 				console.log(data);
@@ -135,6 +79,7 @@ function logout_post() {
 			$('#state-message').html('You have been successfully logged out.');
 			$('#user-logout').css("display", "none");
 			$('#user-expenses').css("display", "none");
+			$('#user-data').css("display", "none");
 			$('#login-form-container').css("display", "block");
 		},
 		error: function(xhr, str) {
