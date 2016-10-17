@@ -18,4 +18,4 @@ class NotAdminExpenseSerializer(serializers.ModelSerializer):
     """
     class Meta():
         model = Expense
-        fields = ('id', 'name', 'descr', 'value',)
+        fields = ('id', 'name', 'descr', 'value', 'created')
