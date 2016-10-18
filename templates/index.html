@@ -70,10 +70,10 @@
 		<div id="list-of-users" style="display:none"></div>
 		<div id="user-expenses" style="display:none"></div>
 		<div id="user-logout" style="display:none">
-			<form id="logout-form" action="javascript:void(null);" onclick="logout_post()">
+			<!-- <form id="logout-form" action="javascript:void(null);" onclick="logout_post()">
 				<input type="submit" value="Log out">
-			</form>
- 			<!-- <a href="/auth/logout/?next=/">Log out</a> -->
+			</form> -->
+ 			<a href="/auth/logout/?next=/index/">Log out</a>
  			<!-- <a href="/auth/logout/">Log out</a> -->
 		</div>
 		<!-- React -->
@@ -89,6 +89,7 @@
 		<script src="{% static 'static/index/admin_expense_box.js' %}" type="text/jsx"></script>
 		<script src="{% static 'static/index/user_request_functions.js' %}" type="text/jsx"></script>
 		<script src="{% static 'static/index/current_user_box.js' %}" type="text/jsx"></script>
+		<script src="{% static 'static/index/users_box.js' %}" type="text/jsx"></script>
 		<script src="{% static 'static/index/main.js' %}" type="text/jsx"></script>
 		<!-- Bootstrap JavaScript -->
 		<!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script> -->

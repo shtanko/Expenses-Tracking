@@ -1,4 +1,4 @@
-var users_url;
+var usersUrl;
 var expensesUrl;
 
 setCSRFTokenInRequestHeader();
@@ -50,7 +50,7 @@ function login_post() {
 				$('#login-form-container').css("display", "none");
 				console.log('You have been successfully logged in.');
 				console.log(data);
-				users_url = data['users'];
+				usersUrl = data['users'];
 				expensesUrl = data['expenses'];
 				$('#user-data').css("display", "block");
 				ReactDOM.render(
@@ -80,6 +80,7 @@ function logout_post() {
 			$('#user-logout').css("display", "none");
 			$('#user-expenses').css("display", "none");
 			$('#user-data').css("display", "none");
+			$('#list-of-users').css("display", "none");
 			$('#login-form-container').css("display", "block");
 		},
 		error: function(xhr, str) {

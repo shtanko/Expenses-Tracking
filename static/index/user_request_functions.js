@@ -1,12 +1,28 @@
 var currentUserUrl;
 
-function setUpUserExpenses(user) {
+function setUpUserEnvironment(user) {
 	$('#user-expenses').css("display", "block");
-	if (('groups' in user) && (user.groups[0] == 3)) {
-		ReactDOM.render(
-			<AdminExpenseBox expensesUrl={expensesUrl} />,
-			document.getElementById('user-expenses')
-		);
+	$('#list-of-users').css("display", "block");
+	if (('groups' in user)) {
+		if (user.groups[0] == 3) {
+			ReactDOM.render(
+				<AdminUserBox usersUrl={usersUrl} />,
+				document.getElementById('list-of-users')
+			);
+			ReactDOM.render(
+				<AdminExpenseBox expensesUrl={expensesUrl} />,
+				document.getElementById('user-expenses')
+			);
+		} else if (user.groups[0] == 2) {
+			ReactDOM.render(
+				<AdminUserBox usersUrl={usersUrl} />,
+				document.getElementById('list-of-users')
+			);
+			ReactDOM.render(
+				<ExpenseBox expensesUrl={expensesUrl} />,
+				document.getElementById('user-expenses')
+			);
+		}
 	} else {
 		ReactDOM.render(
 			<ExpenseBox expensesUrl={expensesUrl} />,
@@ -17,24 +33,23 @@ function setUpUserExpenses(user) {
 
 function getUserData(reactObj, urlToCurrentUserObj) {
 	// Attempt to get user object
-	if (urlToCurrentUserObj !== undefined) {
-		$.get({
-			url: urlToCurrentUserObj,
-			dataType: 'json',
-			success: function(user) {
-				reactObj.setState({
-					username: user.username,
-					email: user.email,
-					first_name: user.first_name,
-					last_name: user.last_name
-				});				// If we've got user object, then we can set up this user expenses.
-				setUpUserExpenses(user);
-			}.bind(reactObj),
-			error: function(xhr, status, err) {
-				console.log(xhr);
-			}.bind(reactObj)
-		});
-	}
+	$.get({
+		url: urlToCurrentUserObj,
+		dataType: 'json',
+		success: function(user) {
+			reactObj.setState({
+				username: user.username,
+				email: user.email,
+				first_name: user.first_name,
+				last_name: user.last_name
+			});
+			// If we've got user object, then we can set up this user expenses.
+			setUpUserEnvironment(user);
+		}.bind(reactObj),
+		error: function(xhr, status, err) {
+			console.log(xhr);
+		}.bind(reactObj)
+	});
 }
 
 function setUpUserData(reactObj) {
@@ -75,5 +90,82 @@ function putUser(reactObj, newUserData) {
 		error: function(xhr, status, err) {
 			console.log(xhr);
 		}
+	});
+}
+
+function getUserList(reactObj, usersUrl) {
+	$.ajax({
+		url: usersUrl,
+		type: 'GET',
+		dataType: 'json',
+		success: function(data) {
+			reactObj.setState({data: data});
+		}.bind(reactObj),
+		error: function(xhr, status, err) {
+			console.log(xhr);
+		}.bind(reactObj)
+	});
+}
+
+function postUser(reactObj, user) {
+	$.ajax({
+		url: reactObj.props.usersUrl,
+		type: 'POST',
+		dataType: 'json',
+		data: user,
+		success: function(data) {
+			var newData = reactObj.state.data.concat([data]);
+			reactObj.setState({data: newData});
+		}.bind(reactObj),
+		error: function(xhr, status, err) {
+			console.log(xhr);
+		}.bind(reactObj)
+	});
+}
+
+function putUser(reactObj, user) {
+	console.log(user)
+	$.ajax({
+		url: user.url,
+		type: 'PUT',
+		dataType: 'json',
+		data: user,
+		success: function(item) {
+			console.log(item);
+			var data = reactObj.state.data;
+			for (var i = data.length - 1; i >= 0; i--) {
+				if (item.id == data[i].id) {
+					data[i] = item;
+					break;
+				}
+			}
+			reactObj.setState({data: data});
+		}.bind(reactObj),
+		error: function(xhr, status, err) {
+			console.log(xhr);
+		}.bind(reactObj)
+	});
+}
+
+function deleteUser(reactObj, user) {
+	var itemId = user.id;
+	$.ajax({
+		url: user.url,
+		type: 'DELETE',
+		dataType: 'json',
+		data: user,
+		success: function(data) {
+			var data = reactObj.state.data;
+			for (var i = data.length - 1; i >= 0; i--) {
+				if (itemId == data[i].id) {
+					data.splice(i, 1);
+					break;
+				}
+			}
+			reactObj.setState({data: data});
+		}.bind(reactObj),
+		error: function(xhr, status, err) {
+			console.log(xhr);
+		}.bind(reactObj)
 	});
 }

@@ -261,7 +261,6 @@ var AdminExpenseBox = React.createClass({
 	},
 	handleCreateExpenseSubmit(expense) {
 		postExpense(this, expense);
-		getExpenseList(this, this.props.expensesUrl)
 	},
 	handleUpdateExpenseSubmit(expense) {
 		putExpense(this, expense);
@@ -272,6 +271,7 @@ var AdminExpenseBox = React.createClass({
 	render: function() {
 		return (
 			<div>
+				<AdminExpenseList data={this.state.data} />
 				<AdminCreateExpenseForm 
 					onCreateExpenseSubmit={this.handleCreateExpenseSubmit} 
 				/>
@@ -282,7 +282,6 @@ var AdminExpenseBox = React.createClass({
 				<AdminDeleteExpenseForm
 					onDeteleExpenseSubmit={this.handleDeleteExpenseSubmit}
 				/>
-				<AdminExpenseList data={this.state.data} />
 			</div>
 		);
 	}
