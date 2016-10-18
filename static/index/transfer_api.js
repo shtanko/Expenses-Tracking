@@ -1,10 +1,6 @@
-function urlToExpense(expensesUrl, expenseId) {
-	return expensesUrl + expenseId + '/'
-}
-
-function getExpenseList(reactObj, expensesUrl) {
+function getItemList(reactObj) {
 	$.ajax({
-		url: expensesUrl,
+		url: reactObj.props.urlToListAndCreate,
 		type: 'GET',
 		dataType: 'json',
 		success: function(data) {
@@ -12,40 +8,32 @@ function getExpenseList(reactObj, expensesUrl) {
 		}.bind(reactObj),
 		error: function(xhr, status, err) {
 			console.log(xhr);
-			// console.log(status);
-			// console.log(err.toString());
-			// console.error(url_to_expenses, status, err.toString());
 		}.bind(reactObj)
 	});
 }
 
-function postExpense(reactObj, expense) {
+function postItem(reactObj, item) {
 	$.ajax({
-		url: reactObj.props.expensesUrl,
+		url: reactObj.props.urlToListAndCreate,
 		type: 'POST',
 		dataType: 'json',
-		data: expense,
+		data: item,
 		success: function(data) {
 			var newData = reactObj.state.data.concat([data]);
 			reactObj.setState({data: newData});
 		}.bind(reactObj),
 		error: function(xhr, status, err) {
 			console.log(xhr);
-			// console.log(status);
-			// console.log(err.toString());
-			// console.error(reactObj.props.expensesUrl, status, err.toString());
 		}.bind(reactObj)
 	});
 }
 
-function putExpense(reactObj, expense) {
-	var url = urlToExpense(expensesUrl, expense.id);
-	console.log(url);
+function putItem(reactObj, item) {
 	$.ajax({
-		url: url,
+		url: item.url,
 		type: 'PUT',
 		dataType: 'json',
-		data: expense,
+		data: item,
 		success: function(item) {
 			console.log(item);
 			var data = reactObj.state.data;
@@ -59,21 +47,17 @@ function putExpense(reactObj, expense) {
 		}.bind(reactObj),
 		error: function(xhr, status, err) {
 			console.log(xhr);
-			// console.log(status);
-			// console.log(err.toString());
-			// console.error(reactObj.props.expensesUrl, status, err.toString());
 		}.bind(reactObj)
 	});
 }
 
-function deleteExpense(reactObj, expense) {
-	var url = urlToExpense(expensesUrl, expense.id);
-	var itemId = expense.id;
+function deleteItem(reactObj, item) {
+	var itemId = item.id;
 	$.ajax({
-		url: url,
+		url: item.url,
 		type: 'DELETE',
 		dataType: 'json',
-		data: expense,
+		data: item,
 		success: function(data) {
 			var data = reactObj.state.data;
 			for (var i = data.length - 1; i >= 0; i--) {
@@ -86,9 +70,6 @@ function deleteExpense(reactObj, expense) {
 		}.bind(reactObj),
 		error: function(xhr, status, err) {
 			console.log(xhr);
-			// console.log(status);
-			// console.log(err.toString());
-			// console.error(reactObj.props.expensesUrl, status, err.toString());
 		}.bind(reactObj)
 	});
 }

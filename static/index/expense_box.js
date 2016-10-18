@@ -231,16 +231,16 @@ var ExpenseBox = React.createClass({
 		return {data: []};
 	},
 	componentDidMount() {
-		getExpenseList(this, this.props.expensesUrl);
+		getItemList(this);
 	},
 	handleCreateExpenseSubmit(expense) {
-		postExpense(this, expense);
+		postItem(this, expense);
 	},
 	handleUpdateExpenseSubmit(expense) {
-		putExpense(this, expense);
+		putItem(this, expense);
 	},
 	handleDeleteExpenseSubmit(expense) {
-		deleteExpense(this, expense);
+		deleteItem(this, expense);
 	},
 	render: function() {
 		return (

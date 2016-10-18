@@ -348,16 +348,16 @@ var AdminUserBox = React.createClass({
 		return {data: []};
 	},
 	componentDidMount() {
-		getUserList(this, this.props.usersUrl);
+		getItemList(this);
 	},
 	handleCreateUserSubmit(user) {
-		postUser(this, user);
+		postItem(this, user);
 	},
 	handleUpdateUserSubmit(user) {
-		putUser(this, user);
+		putItem(this, user);
 	},
 	handleDeleteUserSubmit(user) {
-		deleteUser(this, user);
+		deleteItem(this, user);
 	},
 	render: function() {
 		return (

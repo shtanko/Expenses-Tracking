@@ -136,7 +136,24 @@ var CurrentUserBox = React.createClass({
 		setUpUserData(this);
 	},
 	handleUpdateAccountSubmit(newUserData) {
-		putUser(this, newUserData);
+		var reactObj = this;
+		$.ajax({
+			url: currentUserUrl,
+			type: 'PUT',
+			dataType: 'json',
+			data: newUserData,
+			success: function(newUser) {
+				reactObj.setState({
+					username: newUser.username,
+					email: newUser.email,
+					first_name: newUser.first_name,
+					last_name: newUser.last_name
+				});
+			},
+			error: function(xhr, status, err) {
+				console.log(xhr);
+			}
+		});
 	},
 	render() {
 		var user = {
