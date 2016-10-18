@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group
 from rest_framework import serializers
 
+from users import permissions as user_permissions
 from users.models import User
 
 
@@ -71,3 +72,13 @@ class ManagerUserSerializer(serializers.HyperlinkedModelSerializer):
         if not validated_data.get('password'):
             validated_data['password'] = validated_data['username']
         return super(ManagerUserSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        if not validated_data.get('groups'):
+            validated_data['groups'] = instance.groups.values_list(
+                'id',
+                flat=True
+            )
+        return super(ManagerUserSerializer, self).update(
+            instance, validated_data
+        )
