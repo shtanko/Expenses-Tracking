@@ -58,7 +58,6 @@ function setUpUserData(reactObj) {
 		url: '/users/get_self_url/',
 		dataType: 'json',
 		success: function(data) {
-			console.log(data);
 			// If we've got url, next we get attempt to get user object
 			if ('url' in data) {
 				currentUserUrl = data.url;

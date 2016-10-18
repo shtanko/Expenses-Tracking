@@ -1,12 +1,20 @@
 var UpdateCurrentUserDataForm = React.createClass({
 	getInitialState() {
-		return {
-			username: this.props.user.username, 
+		return  {
+			username: '',
 			password: '',
-			email: this.props.user.email, 
-			first_name: this.props.user.first_name,
-			last_name: this.props.user.last_name
+			email: '',
+			first_name: '',
+			last_name: ''
 		};
+	},
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			username: nextProps.user.username,
+			email: nextProps.user.email,
+			first_name: nextProps.user.first_name,
+			last_name: nextProps.user.last_name
+		});
 	},
 	handleUsernameChange(e) {
 		this.setState({username: e.target.value});
@@ -156,20 +164,13 @@ var CurrentUserBox = React.createClass({
 		});
 	},
 	render() {
-		var user = {
-			username: this.state.username,
-			password: this.state.password,
-			email: this.state.email,
-			first_name: this.state.first_name,
-			last_name: this.state.last_name
-		};
 		return (
 			<div>
-				<CurrentUserData user={user} />
+				<CurrentUserData user={this.state} />
 				<UpdateCurrentUserDataForm 
-					user={user}
+					user={this.state}
 					onUpdateAccountSubmit={this.handleUpdateAccountSubmit}
-					/>
+				/>
 			</div>
 		);
 	}
