@@ -35,7 +35,7 @@ class UserViewSet(viewsets.ModelViewSet):
         instance.save()
 
     def perform_update(self, serializer):
-        instance = serializer.save()
+        instance = serializer.save(current_user=self.request.user)
 
         current_user = self.request.user
         is_current_user_admin = user_permissions.is_admin(current_user)
