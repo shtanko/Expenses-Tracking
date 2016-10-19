@@ -39,9 +39,6 @@ class UserViewSet(viewsets.ModelViewSet):
 
         current_user = self.request.user
         is_current_user_admin = user_permissions.is_admin(current_user)
-        if not is_current_user_admin:
-            user_permissions.set_regular_user_permissions_to(instance)
-
         if is_current_user_admin \
                 or not user_permissions.is_admin_or_manager(instance):
             instance.set_password(instance.password)
