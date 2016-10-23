@@ -1,1 +1,1 @@
-from qm_test_proj.settings.base import *
+from settings.base import *

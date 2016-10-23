@@ -1,0 +1,7 @@
+[client]
+database = qm_test_proj
+user = django_user
+password = c0w9mutw49ct
+default-character-set = utf8
+host = db
+port = 3306

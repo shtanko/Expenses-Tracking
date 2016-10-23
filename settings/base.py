@@ -82,7 +82,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'OPTIONS': {
-            'read_default_file': os.path.join(BASE_DIR, 'mysqldb.cnf'),
+            'read_default_file': os.path.join(BASE_DIR, 'mysql_db_base.cnf'),
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
     }
@@ -126,10 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = './static/'
 
-STATICFILES_DIRS = [
-    ('static', os.path.join(BASE_DIR, 'static')),
-]
+# STATICFILES_DIRS = [
+#     ('static', os.path.join(BASE_DIR, 'static')),
+# ]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
