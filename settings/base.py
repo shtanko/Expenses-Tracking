@@ -128,10 +128,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = './static/'
 
-# STATICFILES_DIRS = [
-#     ('static', os.path.join(BASE_DIR, 'static')),
-# ]
-
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
