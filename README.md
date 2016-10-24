@@ -9,9 +9,20 @@ In addition, this web-side is an attempt to use RESTful API.
 
 ## Installing
 
+This project supports **docker-compose**. So easiest way to deploy it is to [install **docker-compose**](https://docs.docker.com/compose/install/) and 
+
+```sh
+cd /path/to/project/root/
+git clone https://github.com/shtanko/Expenses-Tracking
+cd qm_test_proj/
+docker-compose up
+```
+
+But may to install all dependencies manually and run it as described below. 
+
 ### Technologies
 
-Sever side of this project uses Python 2.7 with Django 1.10 as main framework (main structure and ORM), Django REST Framework as addition framework (provides RESTful API) and MySQL as database.
+Server side of this project uses Python 2.7 with Django 1.10 as main framework (main structure and ORM), Django REST Framework as addition framework (provides RESTful API) and MySQL as database.
 Client side uses JS and ReactJS framework to handle and render most of all UI.
 
 ### Dependencies
@@ -28,9 +39,8 @@ Install Python (with pip and virtualenv) and MySQL by yourself.
 After that create some folder that will contain server-side code and libraries, go to this directory and download this repository. 
 Then just run this:
 
-```
+```sh
 #!/bin/bash
-
 
 virtualenv venv
 venv/bin/pip install django
@@ -40,12 +50,9 @@ venv/bin/pip install djangorestframework
 
 ### Database set up
 
-Login as root-user to MySQL-server, and create database and user with credentials as in the /path/to/your/server/folder/qm_test_proj/mysqldb.cnf file using this script:
-
-```
-CREATE DATABASE `db_name` CHARACTER SET utf8;
-CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON `db_name`.* TO 'username'@'localhost';
+```sh
+python manage.py dbshell < clear_db.sql
+python manage.py dbshell < db_dump.sql
 ```
 
 ## API Reference
