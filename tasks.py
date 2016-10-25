@@ -17,11 +17,10 @@ def wait_port_is_open(host, port):
 @task
 def reset_db(ctx):
     wait_port_is_open('db', 3306)
-    ctx.run('python manage.py dbshell < clear_db.sql')
+    ctx.run('python manage.py dbshell < set_user_perm_for_testing.sql')
     ctx.run('python manage.py dbshell < db_dump.sql')
     ctx.run('python manage.py migrate --noinput')
     ctx.run('python manage.py collectstatic --noinput')
-# static-map = /=/web/frontend/build
 
 
 @task
