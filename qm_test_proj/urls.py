@@ -29,5 +29,5 @@ urlpatterns = [
     url(r'^index/$',
         TemplateView.as_view(template_name='index.html'),
         name='index'),
-    url(r'^$', views.api_root),
+    url(r'^root/$', views.api_root),
 ]
