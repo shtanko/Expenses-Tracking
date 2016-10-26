@@ -13,8 +13,8 @@ This project supports **docker-compose**. So easiest way to deploy it is to [ins
 
 ```sh
 cd /path/to/project/root/
-git clone https://github.com/shtanko/Expenses-Tracking
-cd qm_test_proj/
+git clone https://github.com/shtanko/Expenses-Tracking some_directory_name
+cd some_directory_name/
 docker-compose up
 ```
 
