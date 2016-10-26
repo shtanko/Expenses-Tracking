@@ -18,16 +18,20 @@ var App = React.createClass({
 			user: '',
 			isAuthenticated: false,
 			urlToCurrentUser: '',
-			urlToUsers: '',
-			urlToExpenses: '',
+			urlToUserList: '',
+			urlToExpenseList: '',
 			groupId: 1
 		};
 	},
-	getUserData(urlToCurrentUserObj) {
-		// Attempt to get user object
+	handleSuccessfulLogin(data) {
+		this.setState({
+			urlToExpenseList: data.expenses,
+			urlToUserList: data.users,
+			urlToCurrentUser: data.url_to_user_data
+		});
 		var reactObj = this;
 		$.get({
-			url: urlToCurrentUserObj,
+			url: data.url_to_user_data,
 			dataType: 'json',
 			success: function(user) {
 				if ('groups' in user) {
@@ -48,40 +52,14 @@ var App = React.createClass({
 			}.bind(reactObj)
 		});
 	},
-	handleSuccessfulLogin(data) {
-		// Attempt to get url to the current user object
-		var reactObj = this;
-		$.get({
-			url: urlToGetSelfDataUrl,
-			dataType: 'json',
-			success: function(data) {
-				// If we've got url, next we get attempt to get user object
-				if ('url' in data) {
-					var urlToUser = data.url;
-					reactObj.getUserData(urlToUser);
-					reactObj.setState({urlToCurrentUser: urlToUser});
-				} else {
-					console.log(data);
-				}
-			},
-			error: function(xhr, status, err) {
-				console.log(xhr);
-			}
-		});		
-		this.setState({
-			urlToExpenses: data.expenses,
-			urlToUsers: data.users
-		});
-	},
 	handleAccountUpdate(newUserData) {
-		// this.setState({user : newUserData});
 		setCSRFTokenInRequestHeader();
 		this.setState({
 			user: '',
 			isAuthenticated: false,
 			urlToCurrentUser: '',
-			urlToUsers: '',
-			urlToExpenses: '',
+			urlToUserList: '',
+			urlToExpenseList: '',
 			groupId: 1
 		});
 	},
@@ -96,8 +74,8 @@ var App = React.createClass({
 					user: '',
 					isAuthenticated: false,
 					urlToCurrentUser: '',
-					urlToUsers: '',
-					urlToExpenses: '',
+					urlToUserList: '',
+					urlToExpenseList: '',
 					groupId: 1
 				});
 			},
@@ -120,7 +98,7 @@ var App = React.createClass({
 							/>
 							<div className="container" >
 								<ExpenseBox 
-									urlToListAndCreate={this.state.urlToExpenses}
+									urlToListAndCreate={this.state.urlToExpenseList}
 								/>
 							</div>
 						</div>
@@ -139,12 +117,12 @@ var App = React.createClass({
 							/>
 							<div className="container" >
 								<AdminUserBox 
-									urlToListAndCreate={this.state.urlToUsers}
+									urlToListAndCreate={this.state.urlToUserList}
 								/>
 							</div>
 							<div className="container" >
 								<ExpenseBox 
-									urlToListAndCreate={this.state.urlToExpenses}
+									urlToListAndCreate={this.state.urlToExpenseList}
 								/>
 							</div>
 						</div>
@@ -163,12 +141,12 @@ var App = React.createClass({
 							/>
 							<div className="container">
 								<AdminUserBox 
-									urlToListAndCreate={this.state.urlToUsers}
+									urlToListAndCreate={this.state.urlToUserList}
 								/>
 							</div>
 							<div className="container">
 								<AdminExpenseBox 
-									urlToListAndCreate={this.state.urlToExpenses}
+									urlToListAndCreate={this.state.urlToExpenseList}
 								/>
 							</div>
 						</div>

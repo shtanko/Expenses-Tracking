@@ -44,17 +44,3 @@ class UserViewSet(viewsets.ModelViewSet):
             instance.set_password(instance.password)
 
         instance.save()
-
-
-@api_view(['GET'])
-@permission_classes((IsAuthenticated,))
-def getSelfUrl(request, format=None):
-    return Response({
-        'url':
-            reverse(
-                'users:detail',
-                request=request,
-                format=format,
-                kwargs={'pk': request.user.id}
-            ),
-    })
