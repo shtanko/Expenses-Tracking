@@ -95,4 +95,4 @@ class ManagerUserSerializer(serializers.ModelSerializer):
 class GroupSerializer(serializers.ModelSerializer):
     class Meta():
         model = Group
-        excluse = ('permissions',)
+        exclude = ('permissions',)

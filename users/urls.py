@@ -31,7 +31,7 @@ user_detail = views.UserViewSet.as_view({
 })
 
 urlpatterns = [
-    url(r'^groups/$', include(user_group_patterns)),
+    url(r'^groups/', include(user_group_patterns)),
     url(r'^$', user_list, name='list_and_create'),
     url(r'^(?P<pk>[0-9]+)/$', user_detail, name='detail'),
 ]
