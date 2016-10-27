@@ -1,25 +1,15 @@
-from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
 
 from expenses.models import Expense
 
 
-class AdminExpenseSerializer(serializers.ModelSerializer):
-    """
-    Expense serializer class for admins.
-    """
-    url = serializers.HyperlinkedIdentityField(view_name='expenses:detail')
-
+class AdminExpenseSerializer(ModelSerializer):
     class Meta():
         model = Expense
         fields = '__all__'
 
 
-class NotAdminExpenseSerializer(serializers.ModelSerializer):
-    """
-    Expense serializer for regular users and managers.
-    """
-    url = serializers.HyperlinkedIdentityField(view_name='expenses:detail')
-
+class NotAdminExpenseSerializer(ModelSerializer):
     class Meta():
         model = Expense
-        fields = ('url', 'id', 'name', 'descr', 'value', 'created')
+        exclude = ('owner',)
