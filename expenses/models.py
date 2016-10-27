@@ -6,26 +6,10 @@ from users.models import User
 
 
 class Expense(models.Model):
-    """
-    This class describes main application model, every object which represents
-    a user expense, that have
-
-    name:
-        short description of an item, often a type of expense
-    descr:
-        optional field that contains full description that user want to add
-        to that item
-    created:
-        date and time, when expense was commited
-    last_modified:
-        date and time of the last Expense.save() running
-    value:
-        expense value in USD
-    """
     name = models.CharField(max_length=100, blank=False)
     descr = models.TextField(blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    date = models.DateField()
+    time = models.TimeField()
     value = models.FloatField(default=0.0, blank=False)
     owner = models.ForeignKey(
         User,
