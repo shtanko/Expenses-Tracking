@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from rest_framework import viewsets
 
 from users.models import User
@@ -40,3 +41,8 @@ class UserViewSet(viewsets.ModelViewSet):
             instance.set_password(instance.password)
 
         instance.save()
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    permission_classes = (user_permissions.GroupPermissions,)

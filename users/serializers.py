@@ -11,6 +11,7 @@ class RegularUserSerializer(serializers.ModelSerializer):
     """
     class Meta():
         model = User
+        # "groups" field did not pass to prevent regular user self groups edit
         fields = (
             'id',
             'username',
@@ -27,15 +28,10 @@ class RegularUserSerializer(serializers.ModelSerializer):
         }
 
 
-class ManagerUserSerializer(serializers.HyperlinkedModelSerializer):
+class ManagerUserSerializer(serializers.ModelSerializer):
     """
     Serializer class that will be used by user admins and managers.
     """
-    expenses = serializers.HyperlinkedRelatedField(
-        view_name='expenses:detail',
-        many=True,
-        read_only=True
-    )
     groups = serializers.PrimaryKeyRelatedField(
         many=True,
         required=False,
@@ -45,14 +41,12 @@ class ManagerUserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta():
         model = User
         fields = (
-            'url',
             'id',
             'username',
             'password',
             'email',
             'first_name',
             'last_name',
-            'expenses',
             'groups',
         )
         extra_kwargs = {
@@ -61,7 +55,6 @@ class ManagerUserSerializer(serializers.HyperlinkedModelSerializer):
                 'style': {'input_type': 'password'},
                 'required': False,
             },
-            'url': {'view_name': 'users:detail'},
         }
 
     def create(self, validated_data):
@@ -97,3 +90,9 @@ class ManagerUserSerializer(serializers.HyperlinkedModelSerializer):
         return super(ManagerUserSerializer, self).update(
             instance, validated_data
         )
+
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta():
+        model = Group
+        excluse = ('permissions',)

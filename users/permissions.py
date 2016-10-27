@@ -1,7 +1,7 @@
 from django.db.models import Q
 from django.contrib.auth.models import Group
 
-from rest_framework.permissions import BasePermission
+from rest_framework.permissions import BasePermission, IsAuthenticated
 
 
 def is_admin_or_manager(user):
@@ -65,4 +65,11 @@ class UserPermission(BasePermission):
             # (another words, to register a new account).
             if view.action == 'create':
                 return True
+        return False
+
+
+class GroupPermissions(IsAuthenticated):
+    def has_object_permission(self, request, view, obj):
+        if view.action in ('list', 'retrieve'):
+            return True
         return False
