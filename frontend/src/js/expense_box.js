@@ -1,6 +1,5 @@
 import React from 'react';
 import { getItemList, postItem, putItem, deleteItem } from './transfer_api';
-import { cropServerUrl } from '../App';
 
 
 var ExpenseItem = React.createClass({

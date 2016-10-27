@@ -27,4 +27,10 @@ def api_root(request, format=None):
                 format=format,
                 kwargs={'pk': request.user.id}
             ),
+        'groups':
+            reverse(
+                'users:groups:list',
+                request=request,
+                format=format
+            ),
     })
