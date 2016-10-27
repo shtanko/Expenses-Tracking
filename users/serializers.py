@@ -32,6 +32,7 @@ class ManagerUserSerializer(serializers.ModelSerializer):
     """
     Serializer class that will be used by user admins and managers.
     """
+    url = serializers.HyperlinkedIdentityField(view_name='users:detail')
     groups = serializers.PrimaryKeyRelatedField(
         many=True,
         required=False,
@@ -41,6 +42,7 @@ class ManagerUserSerializer(serializers.ModelSerializer):
     class Meta():
         model = User
         fields = (
+            'url',
             'id',
             'username',
             'password',
