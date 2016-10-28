@@ -8,29 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 @permission_classes((IsAuthenticated,))
 def api_root(request, format=None):
     return Response({
-        'users':
-            reverse(
-                'users:list_and_create',
-                request=request,
-                format=format
-            ),
-        'expenses':
-            reverse(
-                'expenses:list_and_create',
-                request=request,
-                format=format
-            ),
+        'users': reverse('users:list_and_create'),
+        'expenses': reverse('expenses:list_and_create'),
+        'groups': reverse('users:groups:list'),
         'url_to_user_data':
-            reverse(
-                'users:detail',
-                request=request,
-                format=format,
-                kwargs={'pk': request.user.id}
-            ),
-        'groups':
-            reverse(
-                'users:groups:list',
-                request=request,
-                format=format
-            ),
+            reverse('users:detail', kwargs={'pk': request.user.id}),
     })
