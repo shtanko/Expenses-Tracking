@@ -2,9 +2,10 @@ import React from 'react';
 import $ from 'jquery';
 
 
-var UpdateCurrentUserDataForm = React.createClass({
+var CurrentUserBox = React.createClass({
 	getInitialState() {
 		return  {
+			url: '',
 			username: '',
 			password: '',
 			email: '',
@@ -12,13 +13,25 @@ var UpdateCurrentUserDataForm = React.createClass({
 			last_name: ''
 		};
 	},
+	componentDidMount() {
+		this.setState({
+			url: this.props.user.url,
+			username: this.props.user.username,
+			email: this.props.user.email,
+			first_name: this.props.user.first_name,
+			last_name: this.props.user.last_name
+		});
+	},
 	componentWillReceiveProps(nextProps) {
 		this.setState({
+			url: nextProps.user.url,
 			username: nextProps.user.username,
 			email: nextProps.user.email,
 			first_name: nextProps.user.first_name,
 			last_name: nextProps.user.last_name
 		});
+	},
+	handleUpdateAccountSubmit(newUserData) {
 	},
 	handleUsernameChange(e) {
 		this.setState({username: e.target.value});
@@ -37,122 +50,20 @@ var UpdateCurrentUserDataForm = React.createClass({
 	},
 	handleSubmit(e) {
 		e.preventDefault();
-		var username = this.state.username.trim();
-		var password = this.state.password;
-		var email = this.state.email.trim();
-		var first_name = this.state.first_name.trim();
-		var last_name = this.state.last_name.trim();
-		this.props.onUpdateAccountSubmit({
-			username: username,
-			password: password,
-			email: email,
-			first_name: first_name,
-			last_name: last_name
-		});
-	},
-	render() {
-		return (
-			<div>
-				<h3>Update account data form</h3>
-				<form onSubmit={this.handleSubmit} >
-					<input 
-						type="text" 
-						name="username" 
-						placeholder="Your username"
-						onChange={this.handleUsernameChange}
-						value={this.state.username}
-					/>
-					<input 
-						type="password" 
-						name="password" 
-						placeholder="Password"
-						onChange={this.handlePasswordChange}
-						value={this.state.password}
-					/>
-					<input 
-						type="email" 
-						name="email" 
-						placeholder="Your email"
-						onChange={this.handleEmailChange}
-						value={this.state.email}
-					/>
-					<input 
-						type="text" 
-						name="first_name" 
-						placeholder="Your first name"
-						onChange={this.handleFirstNameChange}
-						value={this.state.first_name}
-					/>
-					<input 
-						type="text" 
-						name="last_name" 
-						placeholder="Your username"
-						onChange={this.handleLastNameChange}
-						value={this.state.last_name}
-					/>
-					<input type="submit" value="Update account" />
-				</form>
-			</div>
-		);
-	}
-});
-
-
-var CurrentUserData = React.createClass({
-	render() {
-		return (
-			<div>
-				<h3>Your account data</h3>
-				<table>
-					<thead>
-						<tr>
-							<th>Key</th>
-							<th>Value</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Username</td>
-							<td>{this.props.user.username}</td>
-						</tr>
-						<tr>
-							<td>Email</td>
-							<td>{this.props.user.email}</td>
-						</tr>
-						<tr>
-							<td>First name</td>
-							<td>{this.props.user.first_name}</td>
-						</tr>
-						<tr>
-							<td>Last name</td>
-							<td>{this.props.user.last_name}</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		);
-	}
-});
-
-var CurrentUserBox = React.createClass({
-	getInitialState() {
-		return {user: ''};
-	},
-	componentDidMount() {
-		this.setState({user: this.props.user});
-	},
-	componentWillReceiveProps(newUser) {
-		this.setState({user: newUser});
-	},
-	handleUpdateAccountSubmit(newUserData) {
+		var user = {
+			username: this.state.username.trim(),
+			password: this.state.password,
+			email: this.state.email.trim(),
+			first_name: this.state.first_name.trim(),
+			last_name: this.state.last_name.trim(),
+		};
 		var reactObj = this;
 		$.ajax({
-			url: reactObj.state.user.url,
+			url: reactObj.state.url,
 			type: 'PUT',
 			dataType: 'json',
-			data: newUserData,
+			data: user,
 			success: function(newUser) {
-				reactObj.setState({user: newUser});
 				reactObj.props.onAccountUpdate(newUser);
 			},
 			error: function(xhr, status, err) {
@@ -163,11 +74,79 @@ var CurrentUserBox = React.createClass({
 	render() {
 		return (
 			<div>
-				<CurrentUserData user={this.state.user} />
-				<UpdateCurrentUserDataForm 
-					user={this.state.user}
-					onUpdateAccountSubmit={this.handleUpdateAccountSubmit}
-				/>
+				<form onSubmit={this.handleSubmit} >
+					<table>
+						<thead>
+							<tr>
+								<th>Key</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Username</td>
+								<td>
+									<input
+										type="text"
+										name="username"
+										placeholder="Your username"
+										onChange={this.handleUsernameChange}
+										value={this.state.username}
+									/>
+								</td>
+							</tr>
+							<tr>
+								<td>Password</td>
+								<td>
+									<input
+										type="password"
+										name="password"
+										placeholder="Password"
+										onChange={this.handlePasswordChange}
+										value={this.state.password}
+									/>
+								</td>
+							</tr>
+							<tr>
+								<td>Email</td>
+								<td>
+									<input
+										type="email"
+										name="email"
+										placeholder="Your email"
+										onChange={this.handleEmailChange}
+										value={this.state.email}
+									/>
+								</td>
+							</tr>
+							<tr>
+								<td>First name</td>
+								<td>
+									<input
+										type="text"
+										name="first_name"
+										placeholder="Your first name"
+										onChange={this.handleFirstNameChange}
+										value={this.state.first_name}
+									/>
+								</td>
+							</tr>
+							<tr>
+								<td>Last name</td>
+								<td>
+									<input
+										type="text"
+										name="last_name"
+										placeholder="Your username"
+										onChange={this.handleLastNameChange}
+										value={this.state.last_name}
+									/>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<input type="submit" value="Update account" />
+				</form>
 			</div>
 		);
 	}
