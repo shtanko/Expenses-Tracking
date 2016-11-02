@@ -2,13 +2,20 @@ import React from 'react';
 import $ from 'jquery';
 import './App.css';
 import setCSRFTokenInRequestHeader from './js/add_csrf_in_request_header';
-import LoginForm from './js/login';
-import RegistrationForm from './js/registration';
-import CurrentUserBox from './js/current_user_box';
-import AdminUserBox from './js/users_box';
-import ExpenseBox from './js/expense_box';
-import AdminExpenseBox from './js/admin_expense_box';
+import LoginForm from './js/users/login';
+import RegistrationForm from './js/users/registration';
+import CurrentUser from './js/users/current_user';
+import UserBox from './js/users/user_box';
+import ExpenseBox from './js/expenses/expense_box';
 import { urlToLogout } from './js/hardcoded_urls'
+
+
+var user_group_names = {
+	// edit key if your group name is not default value
+	admin_users: 'admin_users',
+	manager_users: 'manager_users',
+	regular_users: 'regular_users'
+}
 
 
 var App = React.createClass({
@@ -17,6 +24,8 @@ var App = React.createClass({
 			user: '',
 			groups: '',
 			isAuthenticated: false,
+			isAdmin: false,
+			isAdminOrManager: false,
 			urlToCurrentUser: '',
 			urlToUserList: '',
 			urlToExpenseList: '',
@@ -28,10 +37,41 @@ var App = React.createClass({
 		setCSRFTokenInRequestHeader();
 		return this.defaultState();
 	},
+	setPermissionFlags(currentUserGroupId, userGroups) {
+		this.setState({
+			isAdmin: currentUserGroupId === userGroups.admin_users,
+			isAdminOrManager: (
+				(currentUserGroupId === userGroups.admin_users) ||
+				(currentUserGroupId === userGroups.manager_users)
+			)
+		});
+	},
+	getUser(userGroups) {
+		var reactObj = this;
+		$.get({
+			url: this.state.urlToCurrentUser,
+			dataType: 'json',
+			success: function(user) {
+				var userGroupId = (('groups' in user) ? user.groups[0] : userGroups.regular_users);
+				reactObj.setPermissionFlags(userGroupId, userGroups);
+				reactObj.setState({
+					user: user,
+					groupId: userGroupId,
+					isAuthenticated: true
+				});
+			}.bind(reactObj),
+			error: function(xhr, status, err) {
+				console.log(xhr);
+			}.bind(reactObj)
+		});
+	},
 	processRawGroups(raw_groups) {
 		var groups = new Object();
 		raw_groups.forEach(function(group) {
-			groups[group.name] = group.id;
+			// From group.name we'll get back-end user group name.
+			// And from user_group_names we'll get same front-end user group name.
+			// This mechanism let you easy to use your custom user group name.
+			groups[user_group_names[group.name]] = group.id;
 		});
 		this.setState({groups: groups});
 		return groups;
@@ -42,38 +82,13 @@ var App = React.createClass({
 			url: reactObj.state.urlToGroups,
 			dataType: 'json',
 			success: function(raw_groups) {
-				this.processRawGroups(raw_groups);
-				reactObj.getUser();
+				var groups = reactObj.processRawGroups(raw_groups);
+				reactObj.getUser(groups);
 			}.bind(reactObj),
 			error: function(xhr, status, err) {
 				console.log(xhr);
 			}.bind(reactObj)
 		})
-	},
-	getUser() {
-		var reactObj = this;
-		$.get({
-			url: this.state.urlToCurrentUser,
-			dataType: 'json',
-			success: function(user) {
-				if ('groups' in user) {
-					reactObj.setState({
-						user: user,
-						isAuthenticated: true,
-						groupId: user.groups[0] 
-					});
-				} else {
-					reactObj.setState({
-						user: user,
-						isAuthenticated: true,
-						groupId: this.state.groups.regular_users
-					});
-				}
-			}.bind(reactObj),
-			error: function(xhr, status, err) {
-				console.log(xhr);
-			}.bind(reactObj)
-		});
 	},
 	handleSuccessfulLogin(data) {
 		this.setState({
@@ -105,75 +120,29 @@ var App = React.createClass({
 	},
 	render() {
 		if (this.state.isAuthenticated) {
-			if (this.state.groupId === this.state.groups.regular_users) {
-				return (
-					<div className="App">
-						<div className="container" >
-							<CurrentUserBox
-								user={this.state.user}
-								onAccountUpdate={this.handleAccountUpdate}
-								setUpUserPermissions={this.handleUserPermissions}
-								setCurrentUserUrl={this.handleCurrentUserUrl}
-							/>
-							<div className="container" >
-								<ExpenseBox 
-									urlToListAndCreate={this.state.urlToExpenseList}
-								/>
-							</div>
-						</div>
-						<button onClick={this.handleLogout}>Logout</button>
-					</div>
-				);
-			} else if (this.state.groupId === this.state.groups.manager_users) {
-				return (
-					<div className="App">
-						<div className="container" >
-							<CurrentUserBox
-								user={this.state.user}
-								onAccountUpdate={this.handleAccountUpdate}
-								setUpUserPermissions={this.handleUserPermissions}
-								setCurrentUserUrl={this.handleCurrentUserUrl}
-							/>
-							<div className="container" >
-								<AdminUserBox 
-									urlToListAndCreate={this.state.urlToUserList}
-								/>
-							</div>
-							<div className="container" >
-								<ExpenseBox 
-									urlToListAndCreate={this.state.urlToExpenseList}
-								/>
-							</div>
-						</div>
-						<button onClick={this.handleLogout}>Logout</button>
-					</div>
-				);
-			} else if (this.state.groupId === this.state.groups.admin_users) {
-				return (
-					<div className="App">
+			return (
+				<div className="App">
+					<div className="container">
+						<CurrentUser
+							user={this.state.user}
+							onAccountUpdate={this.handleAccountUpdate}
+						/>
 						<div className="container">
-							<CurrentUserBox
-								user={this.state.user}
-								onAccountUpdate={this.handleAccountUpdate}
-								setUpUserPermissions={this.handleUserPermissions}
-								setCurrentUserUrl={this.handleCurrentUserUrl}
+							<UserBox
+								isAdminOrManager={this.state.isAdminOrManager}
+								urlToListAndCreate={this.state.urlToUserList}
 							/>
-							<div className="container">
-								<AdminUserBox 
-									urlToListAndCreate={this.state.urlToUserList}
-								/>
-							</div>
-							<div className="container">
-								<AdminExpenseBox 
-									urlToListAndCreate={this.state.urlToExpenseList}
-								/>
-							</div>
 						</div>
-						<button onClick={this.handleLogout}>Logout</button>
+						<div className="container">
+							<ExpenseBox
+								isAdmin={this.state.isAdmin}
+								urlToListAndCreate={this.state.urlToExpenseList}
+							/>
+						</div>
 					</div>
-				);
-
-			}
+					<button onClick={this.handleLogout}>Logout</button>
+				</div>
+			);
 		} else {
 			return (
 				<div className="App">

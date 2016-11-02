@@ -1,7 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
-import setCSRFTokenInRequestHeader from './add_csrf_in_request_header';
-import { urlToLogin } from './hardcoded_urls'
+import setCSRFTokenInRequestHeader from '../add_csrf_in_request_header';
+import { urlToLogin } from '../hardcoded_urls'
 
 
 var LoginForm = React.createClass({

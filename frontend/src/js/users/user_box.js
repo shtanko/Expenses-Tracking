@@ -1,8 +1,8 @@
 import React from 'react';
-import { getItemList, postItem, putItem, deleteItem } from './transfer_api';
+import { getItemList, postItem, putItem, deleteItem } from '../transfer_api';
 
 
-var AdminUserItem = React.createClass({
+var UserItem = React.createClass({
 	render() {
 		return (
 			<tr>
@@ -17,11 +17,11 @@ var AdminUserItem = React.createClass({
 	}
 });
 
-var AdminUserList = React.createClass({
+var UserList = React.createClass({
 	render() {
 		var userNodes = this.props.data.map(function(user) {
 			return (
-				<AdminUserItem 
+				<UserItem 
 					key={user.id}
 					id={user.id}
 					groups={user.groups}
@@ -56,7 +56,7 @@ var AdminUserList = React.createClass({
 	}
 });
 
-var AdminCreateUserForm = React.createClass({
+var CreateUserForm = React.createClass({
 	getInitialState() {
 		return {
 			groups: 0,
@@ -166,7 +166,7 @@ var AdminCreateUserForm = React.createClass({
 	}
 });
 
-var AdminUpdateUserForm = React.createClass({
+var UpdateUserForm = React.createClass({
 	getInitialState() {
 		return {
 			id: 0,
@@ -306,9 +306,9 @@ var AdminUpdateUserForm = React.createClass({
 	}
 });
 
-var AdminDeleteUserForm = React.createClass({
+var DeleteUserForm = React.createClass({
 	getInitialState() {
-		return {id: 0, url: ''};
+		return {id: 0};
 	},
 	handleIdChange(e) {
 		this.setState({id: e.target.value});
@@ -322,13 +322,13 @@ var AdminDeleteUserForm = React.createClass({
 	},
 	handleSubmit(e) {
 		e.preventDefault();
-		var id = this.state.id;
+		var id = parseInt(this.state.id);
 		if (!id) {
 			return;
 		}
 		var item = this.getObjectById(id);
-		this.props.onDeteleUserSubmit({id: id, url: item.url});
-		this.setState({id: 0, url: ''});
+		this.props.onDeteleUserSubmit(item);
+		this.setState(this.getInitialState());
 	},
 	render() {
 		return (
@@ -348,41 +348,53 @@ var AdminDeleteUserForm = React.createClass({
 	}
 });
 
-var AdminUserBox = React.createClass({
+var UserBox = React.createClass({
 	getInitialState() {
 		return {data: []};
 	},
 	componentDidMount() {
-		getItemList(this);
+		if (this.props.isAdminOrManager) {
+			getItemList(this);
+		}
 	},
 	handleCreateUserSubmit(user) {
-		postItem(this, user);
+		if (this.props.isAdminOrManager) {
+			postItem(this, user);
+		}
 	},
 	handleUpdateUserSubmit(user) {
-		putItem(this, user);
+		if (this.props.isAdminOrManager) {
+			putItem(this, user);
+		}
 	},
 	handleDeleteUserSubmit(user) {
-		deleteItem(this, user);
+		if (this.props.isAdminOrManager) {
+			deleteItem(this, user);
+		}
 	},
 	render() {
-		return (
-			<div>
-				<h2>Manage users box</h2>
-				<AdminUserList data={this.state.data} />
-				<AdminCreateUserForm 
-					onCreateUserSubmit={this.handleCreateUserSubmit} 
-				/>
-				<AdminUpdateUserForm 
-					data={this.state.data}
-					onUpdateUserSubmit={this.handleUpdateUserSubmit} 
-				/>
-				<AdminDeleteUserForm
-					data={this.state.data}
-					onDeteleUserSubmit={this.handleDeleteUserSubmit}
-				/>
-			</div>
-		);
+		if (this.props.isAdminOrManager) {
+			return (
+				<div>
+					<h2>Manage users box</h2>
+					<UserList data={this.state.data} />
+					<CreateUserForm 
+						onCreateUserSubmit={this.handleCreateUserSubmit} 
+					/>
+					<UpdateUserForm 
+						data={this.state.data}
+						onUpdateUserSubmit={this.handleUpdateUserSubmit} 
+					/>
+					<DeleteUserForm
+						data={this.state.data}
+						onDeteleUserSubmit={this.handleDeleteUserSubmit}
+					/>
+				</div>
+			);
+		} else {
+			return null;
+		}
 	}
 });
 
-export default AdminUserBox;
+export default UserBox;

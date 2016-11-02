@@ -1,6 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
-import { urlToCreateAccount } from './hardcoded_urls'
+import { urlToCreateAccount } from '../hardcoded_urls'
 
 
 var RegistrationForm = React.createClass({

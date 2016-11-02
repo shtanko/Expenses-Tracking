@@ -2,7 +2,7 @@ import React from 'react';
 import $ from 'jquery';
 
 
-var CurrentUserBox = React.createClass({
+var CurrentUser = React.createClass({
 	getInitialState() {
 		return  {
 			url: '',
@@ -152,4 +152,4 @@ var CurrentUserBox = React.createClass({
 	}
 });
 
-export default CurrentUserBox;
+export default CurrentUser;
