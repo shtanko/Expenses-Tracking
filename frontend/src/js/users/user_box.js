@@ -36,7 +36,7 @@ var UserList = React.createClass({
 		return (
 			<div>
 				<h3>List of users</h3>
-				<table>
+				<table className="table table-hover">
 					<thead>
 						<tr>
 							<th>ID</th>
@@ -104,14 +104,7 @@ var CreateUserForm = React.createClass({
 			first_name: first_name,
 			last_name: last_name
 		});
-		this.setState({
-			groups: 0,
-			username: '',
-			password: '',
-			email: '',
-			first_name: '',
-			last_name: ''
-		});
+		this.setState(this.getInitialState());
 	},
 	render() {
 		return (
@@ -187,15 +180,16 @@ var UpdateUserForm = React.createClass({
 		}
 	},
 	handleIdChange(e) {
-		this.setState({id: e.target.value});
 		var item = this.getObjectById(parseInt(e.target.value));
-		console.log(item)
-		this.setState({groups: item.groups});
-		this.setState({username: item.username});
-		this.setState({email: item.email});
-		this.setState({first_name: item.first_name});
-		this.setState({last_name: item.last_name});
-		this.setState({url: item.url});
+		this.setState({
+			id: e.target.value,
+			groups: item.groups,
+			username: item.username,
+			email: item.email,
+			first_name: item.first_name,
+			last_name: item.last_name,
+			url: item.url
+		});
 	},
 	handleGroupsChange(e) {
 		this.setState({groups: e.target.value});
@@ -236,16 +230,7 @@ var UpdateUserForm = React.createClass({
 			last_name: last_name,
 			url: url
 		});
-		this.setState({
-			id: 0,
-			groups: 0,
-			username: '',
-			password: '',
-			email: '',
-			first_name: '',
-			last_name: '',
-			url: ''
-		});
+		this.setState(this.getInitialState());
 	},
 	render() {
 		return (
@@ -353,29 +338,21 @@ var UserBox = React.createClass({
 		return {data: []};
 	},
 	componentDidMount() {
-		if (this.props.isAdminOrManager) {
-			getItemList(this);
-		}
+		getItemList(this);
 	},
 	handleCreateUserSubmit(user) {
-		if (this.props.isAdminOrManager) {
-			postItem(this, user);
-		}
+		postItem(this, user);
 	},
 	handleUpdateUserSubmit(user) {
-		if (this.props.isAdminOrManager) {
-			putItem(this, user);
-		}
+		putItem(this, user);
 	},
 	handleDeleteUserSubmit(user) {
-		if (this.props.isAdminOrManager) {
-			deleteItem(this, user);
-		}
+		deleteItem(this, user);
 	},
 	render() {
 		if (this.props.isAdminOrManager) {
 			return (
-				<div>
+				<div className="container">
 					<h2>Manage users box</h2>
 					<UserList data={this.state.data} />
 					<CreateUserForm 

@@ -73,7 +73,7 @@ var CurrentUser = React.createClass({
 	},
 	render() {
 		return (
-			<div>
+			<div className="container">
 				<form onSubmit={this.handleSubmit} >
 					<table>
 						<thead>

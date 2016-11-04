@@ -24,7 +24,7 @@ var ExpenseBox = React.createClass({
 	},
 	render() {
 		return (
-			<div>
+			<div className="container">
 				<CreateExpenseForm
 					isAdmin={this.props.isAdmin}
 					onCreateExpenseSubmit={this.handleCreateExpenseSubmit} 

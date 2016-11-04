@@ -7,6 +7,7 @@ import RegistrationForm from './js/users/registration';
 import CurrentUser from './js/users/current_user';
 import UserBox from './js/users/user_box';
 import ExpenseBox from './js/expenses/expense_box';
+import Navbar from './js/navbar';
 import { urlToLogout } from './js/hardcoded_urls'
 
 
@@ -21,6 +22,7 @@ var user_group_names = {
 var App = React.createClass({
 	defaultState() {
 		return {
+			environment: 'home',
 			user: '',
 			groups: '',
 			isAuthenticated: false,
@@ -118,43 +120,50 @@ var App = React.createClass({
 			}.bind(reactObj)
 		});
 	},
+	handleEnvChange(env) {
+		this.setState({environment: env});
+	},
 	render() {
 		if (this.state.isAuthenticated) {
+			var environment = {
+				home: (
+					<CurrentUser
+						user={this.state.user}
+						onAccountUpdate={this.handleAccountUpdate}
+					/>
+				),
+				users: (
+					<UserBox
+						isAdminOrManager={this.state.isAdminOrManager}
+						urlToListAndCreate={this.state.urlToUserList}
+					/>
+				),
+				expenses: (
+					<ExpenseBox
+						isAdmin={this.state.isAdmin}
+						urlToListAndCreate={this.state.urlToExpenseList}
+					/>
+				)
+			};
 			return (
-				<div className="App">
-					<div className="container">
-						<CurrentUser
-							user={this.state.user}
-							onAccountUpdate={this.handleAccountUpdate}
-						/>
-						<div className="container">
-							<UserBox
-								isAdminOrManager={this.state.isAdminOrManager}
-								urlToListAndCreate={this.state.urlToUserList}
-							/>
-						</div>
-						<div className="container">
-							<ExpenseBox
-								isAdmin={this.state.isAdmin}
-								urlToListAndCreate={this.state.urlToExpenseList}
-							/>
-						</div>
-					</div>
-					<button onClick={this.handleLogout}>Logout</button>
+				<div className="container">
+					<Navbar
+						handleEnvChange={this.handleEnvChange}
+						handleLogout={this.handleLogout}
+					/>
+					{environment[this.state.environment]}
 				</div>
 			);
 		} else {
 			return (
-				<div className="App">
-					<div className="container" >
-						<RegistrationForm />
-						<LoginForm onSuccessfulLogin={this.handleSuccessfulLogin} />
-					</div>
-					<button onClick={this.handleLogout}>Logout</button>
+				<div className="container">
+					<LoginForm onSuccessfulLogin={this.handleSuccessfulLogin} className="raw" />
+					<RegistrationForm className="raw" />
 				</div>
 			);
 		}
 	}
 });
+
 
 export default App;
