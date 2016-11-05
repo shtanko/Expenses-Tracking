@@ -56,9 +56,8 @@ var Navbar = React.createClass({
 								type="button"
 								className="navbar-toggle collapsed"
 								data-toggle="collapse"
-								data-target="#navbar"
+								data-target="#my-322-custom-navbar-yay"
 								aria-expanded="false"
-								aria-controls="navbar"
 							>
 								<span className="sr-only">Toggle navigation</span>
 								<span className="icon-bar"></span>
@@ -67,7 +66,10 @@ var Navbar = React.createClass({
 							</button>
 							<a className="navbar-brand" href="/index/">Expenses Tracking</a>
 						</div>
-						<div className="navbar-collapse collapse">
+						<div 
+							id="my-322-custom-navbar-yay" 
+							className="navbar-collapse collapse"
+						>
 							<Menu
 								accessibleEnvs={this.props.accessibleEnvs}
 								currentEnv={this.props.currentEnv}
