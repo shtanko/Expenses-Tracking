@@ -18,25 +18,14 @@ var MenuItem = React.createClass({
 
 
 var Menu = React.createClass({
-	getInitialState() {
-		return {
-			menuItems: [
-				'home',
-				'users',
-				'expenses'
-			],
-			activeItem: 'home'
-		};
-	},
 	setActiveItem(item) {
-		this.setState({activeItem: item});
 		this.props.onActiveItem(item);
 	},
 	render() {
-		var menuItems = this.state.menuItems.map(function(item, key) {
+		var menuItems = this.props.accessibleEnvs.map(function(item, key) {
 			return (
 				<MenuItem
-					active={this.state.activeItem === item}
+					active={this.props.currentEnv === item}
 					name={item}
 					onSelect={this.setActiveItem}
 					key={key}
@@ -80,6 +69,8 @@ var Navbar = React.createClass({
 						</div>
 						<div className="navbar-collapse collapse">
 							<Menu
+								accessibleEnvs={this.props.accessibleEnvs}
+								currentEnv={this.props.currentEnv}
 								onActiveItem={this.props.handleEnvChange}
 							/>
 							<ul className="nav navbar-nav navbar-right">

@@ -11,18 +11,19 @@ import Navbar from './js/navbar';
 import { urlToLogout } from './js/hardcoded_urls'
 
 
-var user_group_names = {
+const user_group_names = {
 	// edit key if your group name is not default value
 	admin_users: 'admin_users',
 	manager_users: 'manager_users',
 	regular_users: 'regular_users'
-}
+};
 
 
 var App = React.createClass({
 	defaultState() {
 		return {
-			environment: 'home',
+			envCurrent: 'home',
+			envArrayOfAccessible: ['home', 'expenses'],
 			user: '',
 			groups: '',
 			isAuthenticated: false,
@@ -47,6 +48,9 @@ var App = React.createClass({
 				(currentUserGroupId === userGroups.manager_users)
 			)
 		});
+		if (this.state.isAdminOrManager) {
+			this.state.envArrayOfAccessible.push('users');
+		}
 	},
 	getUser(userGroups) {
 		var reactObj = this;
@@ -121,37 +125,36 @@ var App = React.createClass({
 		});
 	},
 	handleEnvChange(env) {
-		this.setState({environment: env});
+		this.setState({envCurrent: env});
 	},
 	render() {
 		if (this.state.isAuthenticated) {
-			var environment = {
-				home: (
-					<CurrentUser
-						user={this.state.user}
-						onAccountUpdate={this.handleAccountUpdate}
-					/>
-				),
-				users: (
-					<UserBox
-						isAdminOrManager={this.state.isAdminOrManager}
-						urlToListAndCreate={this.state.urlToUserList}
-					/>
-				),
-				expenses: (
-					<ExpenseBox
-						isAdmin={this.state.isAdmin}
-						urlToListAndCreate={this.state.urlToExpenseList}
-					/>
-				)
-			};
 			return (
 				<div className="container">
 					<Navbar
+						currentEnv={this.state.envCurrent}
+						accessibleEnvs={this.state.envArrayOfAccessible}
 						handleEnvChange={this.handleEnvChange}
 						handleLogout={this.handleLogout}
 					/>
-					{environment[this.state.environment]}
+					<div className={this.state.envCurrent === 'home' ? '' : 'hidden'}>
+						<CurrentUser
+							user={this.state.user}
+							onAccountUpdate={this.handleAccountUpdate}
+						/>
+					</div>
+					<div className={this.state.envCurrent === 'users' ? '' : 'hidden'}>
+						<UserBox
+							isAdminOrManager={this.state.isAdminOrManager}
+							urlToListAndCreate={this.state.urlToUserList}
+						/>
+					</div>
+					<div className={this.state.envCurrent === 'expenses' ? '' : 'hidden'}>
+						<ExpenseBox
+							isAdmin={this.state.isAdmin}
+							urlToListAndCreate={this.state.urlToExpenseList}
+						/>
+					</div>
 				</div>
 			);
 		} else {
