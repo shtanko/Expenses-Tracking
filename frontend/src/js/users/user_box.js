@@ -338,7 +338,9 @@ var UserBox = React.createClass({
 		return {data: []};
 	},
 	componentDidMount() {
-		getItemList(this);
+		if (this.props.isAdminOrManager) {
+			getItemList(this);
+		}
 	},
 	handleCreateUserSubmit(user) {
 		postItem(this, user);
