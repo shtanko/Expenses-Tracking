@@ -16,10 +16,13 @@ var MenuItem = React.createClass({
 });
 
 
-
-var Menu = React.createClass({
-	setActiveItem(item) {
-		this.props.onActiveItem(item);
+var Navbar = React.createClass({
+	setActiveMenuItem(item) {
+		this.props.handleEnvChange(item);
+	},
+	handleLogout(e) {
+		e.preventDefault();
+		this.props.handleLogout();
 	},
 	render() {
 		var menuItems = this.props.accessibleEnvs.map(function(item, key) {
@@ -27,26 +30,11 @@ var Menu = React.createClass({
 				<MenuItem
 					active={this.props.currentEnv === item}
 					name={item}
-					onSelect={this.setActiveItem}
+					onSelect={this.setActiveMenuItem}
 					key={key}
 				/>
 			);
 		}.bind(this));
-		return (
-			<ul className="nav navbar-nav">
-				{menuItems}
-			</ul>
-		);
-	}
-});
-
-
-var Navbar = React.createClass({
-	handleLogout(e) {
-		e.preventDefault();
-		this.props.handleLogout();
-	},
-	render() {
 		return (
 			<div className="container">
 				<nav className="navbar navbar-default">
@@ -70,11 +58,9 @@ var Navbar = React.createClass({
 							id="my-322-custom-navbar-yay" 
 							className="navbar-collapse collapse"
 						>
-							<Menu
-								accessibleEnvs={this.props.accessibleEnvs}
-								currentEnv={this.props.currentEnv}
-								onActiveItem={this.props.handleEnvChange}
-							/>
+							<ul className="nav navbar-nav">
+								{menuItems}
+							</ul>
 							<ul className="nav navbar-nav navbar-right">
 								<li><a href="#" onClick={this.handleLogout}>Logout</a></li>
 							</ul>
