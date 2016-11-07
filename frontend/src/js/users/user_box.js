@@ -354,20 +354,44 @@ var UserBox = React.createClass({
 	render() {
 		if (this.props.isAdminOrManager) {
 			return (
-				<div className="container">
-					<h2>Manage users box</h2>
-					<UserList data={this.state.data} />
-					<CreateUserForm 
-						onCreateUserSubmit={this.handleCreateUserSubmit} 
-					/>
-					<UpdateUserForm 
-						data={this.state.data}
-						onUpdateUserSubmit={this.handleUpdateUserSubmit} 
-					/>
-					<DeleteUserForm
-						data={this.state.data}
-						onDeteleUserSubmit={this.handleDeleteUserSubmit}
-					/>
+				<div role="tabpanel" className="container">
+					<ul className="nav nav-tabs" role="tablist">
+						<li role="presentation" className="active">
+							<a href="#user-box-list" aria-controls="list" role="tab" data-toggle="tab">list</a>
+						</li>
+						<li role="presentation">
+							<a href="#user-box-create" aria-controls="create" role="tab" data-toggle="tab">create</a>
+						</li>
+						<li role="presentation">
+							<a href="#user-box-update" aria-controls="update" role="tab" data-toggle="tab">update</a>
+						</li>
+						<li role="presentation">
+							<a href="#user-box-delete" aria-controls="delete" role="tab" data-toggle="tab">delete</a>
+						</li>
+					</ul>
+
+					<div className="tab-content">
+						<div role="tabpanel" className="tab-pane active" id="user-box-list">
+							<UserList data={this.state.data} />
+						</div>
+						<div role="tabpanel" className="tab-pane" id="user-box-create">
+							<CreateUserForm 
+								onCreateUserSubmit={this.handleCreateUserSubmit} 
+							/>
+						</div>
+						<div role="tabpanel" className="tab-pane" id="user-box-update">
+							<UpdateUserForm 
+								data={this.state.data}
+								onUpdateUserSubmit={this.handleUpdateUserSubmit} 
+							/>
+						</div>
+						<div role="tabpanel" className="tab-pane" id="user-box-delete">
+							<DeleteUserForm
+								data={this.state.data}
+								onDeteleUserSubmit={this.handleDeleteUserSubmit}
+							/>
+						</div>
+					</div>
 				</div>
 			);
 		} else {
