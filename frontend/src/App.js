@@ -22,7 +22,6 @@ const user_group_names = {
 var App = React.createClass({
 	defaultState() {
 		return {
-			envCurrent: 'home',
 			envArrayOfAccessible: ['home', 'expenses'],
 			user: '',
 			groups: '',
@@ -124,36 +123,33 @@ var App = React.createClass({
 			}.bind(reactObj)
 		});
 	},
-	handleEnvChange(env) {
-		this.setState({envCurrent: env});
-	},
 	render() {
 		if (this.state.isAuthenticated) {
 			return (
 				<div className="container">
 					<Navbar
-						currentEnv={this.state.envCurrent}
 						accessibleEnvs={this.state.envArrayOfAccessible}
-						handleEnvChange={this.handleEnvChange}
 						handleLogout={this.handleLogout}
 					/>
-					<div className={this.state.envCurrent === 'home' ? '' : 'hidden'}>
-						<CurrentUser
-							user={this.state.user}
-							onAccountUpdate={this.handleAccountUpdate}
-						/>
-					</div>
-					<div className={this.state.envCurrent === 'users' ? '' : 'hidden'}>
-						<UserBox
-							isAdminOrManager={this.state.isAdminOrManager}
-							urlToListAndCreate={this.state.urlToUserList}
-						/>
-					</div>
-					<div className={this.state.envCurrent === 'expenses' ? '' : 'hidden'}>
-						<ExpenseBox
-							isAdmin={this.state.isAdmin}
-							urlToListAndCreate={this.state.urlToExpenseList}
-						/>
+					<div className="tab-content">
+						<div id="main-navbar-home" className="tab-pane in active">
+							<CurrentUser
+								user={this.state.user}
+								onAccountUpdate={this.handleAccountUpdate}
+							/>
+						</div>
+						<div id="main-navbar-users" className="tab-pane">
+							<UserBox
+								isAdminOrManager={this.state.isAdminOrManager}
+								urlToListAndCreate={this.state.urlToUserList}
+							/>
+						</div>
+						<div id="main-navbar-expenses" className="tab-pane">
+							<ExpenseBox
+								isAdmin={this.state.isAdmin}
+								urlToListAndCreate={this.state.urlToExpenseList}
+							/>
+						</div>
 					</div>
 				</div>
 			);
@@ -167,6 +163,5 @@ var App = React.createClass({
 		}
 	}
 });
-
 
 export default App;
