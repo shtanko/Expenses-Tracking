@@ -5,7 +5,6 @@ var UpdateExpenseForm = React.createClass({
 	getInitialState() {
 		return {
 			ownerId: 0,
-			id: 0,
 			name: '',
 			descr: '',
 			value: '',
@@ -14,27 +13,17 @@ var UpdateExpenseForm = React.createClass({
 			url: ''
 		};
 	},
-	getObjectById(id) {
-		for (var i = this.props.data.length - 1; i >= 0; i--) {
-			if (id === this.props.data[i].id) {
-				return this.props.data[i];
-			}
-		}
-	},
-	handleIdChange(e) {
-		this.setState({id: e.target.value});
-		var item = this.getObjectById(parseInt(e.target.value));
+	componentWillReceiveProps(nextProps) {
 		this.setState({
-			ownerId: item.owner,
-			name: item.name,
-			descr: item.descr,
-			value: item.value,
-			date: item.date,
-			time: item.time,
-			url: item.url
+			name: nextProps.item.name,
+			descr: nextProps.item.descr,
+			value: nextProps.item.value,
+			date: nextProps.item.date,
+			time: nextProps.item.time,
+			url: nextProps.item.url
 		});
-		if (this.props.userGroupId === this.props.userGroups.admin_users) {
-			this.setState({ownerId: item.owner});
+		if (this.props.isAdmin) {
+			this.setState({ownerId: nextProps.item.owner});
 		}
 	},
 	handleNameChange(e) {
@@ -57,19 +46,23 @@ var UpdateExpenseForm = React.createClass({
 	},
 	handleSubmit(e) {
 		e.preventDefault();
-		var id = this.state.id;
 		var owner = parseInt(this.state.ownerId);
 		var name = this.state.name.trim();
 		var descr = this.state.descr.trim();
-		var value = this.state.value.trim();
 		var date = this.state.date.trim();
 		var time = this.state.time.trim();
-		if (!(id && owner && name && value)) {
+		var value = this.state.value;
+		if (typeof value === 'string') {
+			value = value.trim();
+		}
+		if (!(name && value)) {
+			return;
+		}
+		if (this.props.isAdmin && owner <= 0) {
 			return;
 		}
 		this.props.onUpdateExpenseSubmit({
 			owner: owner,
-			id: id,
 			name: name,
 			descr: descr,
 			value: value,
@@ -82,12 +75,6 @@ var UpdateExpenseForm = React.createClass({
 	render() {
 		var baseUpdateExpenseInputs = (
 			<div>
-				<input 
-					type="number" 
-					name="id" 
-					onChange={this.handleIdChange}
-					value={this.state.id}
-				/>
 				<input 
 					type="text"
 					name="name"

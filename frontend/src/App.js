@@ -71,7 +71,7 @@ var App = React.createClass({
 		});
 	},
 	processRawGroups(raw_groups) {
-		var groups = new Object();
+		var groups = {};
 		raw_groups.forEach(function(group) {
 			// From group.name we'll get back-end user group name.
 			// And from user_group_names we'll get same front-end user group name.

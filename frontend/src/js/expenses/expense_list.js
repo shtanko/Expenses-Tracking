@@ -4,9 +4,12 @@ import { AdminExpenseItem, ExpenseItem } from './expense_item'
 
 var AdminExpenseList = React.createClass({
 	render() {
+		var reactObj = this;
 		var expenseNodes = this.props.data.map(function(expense) {
 			return (
-				<AdminExpenseItem 
+				<AdminExpenseItem
+					onUpdateListItem={reactObj.props.onUpdateListItem}
+					onDeleteListItem={reactObj.props.onDeleteListItem}
 					key={expense.id}
 					id={expense.id}
 					owner={expense.owner}
@@ -24,6 +27,7 @@ var AdminExpenseList = React.createClass({
 				<table className="table table-hover">
 					<thead>
 						<tr>
+							<th></th>
 							<th>ID</th>
 							<th>Owner</th>
 							<th>Name</th>
@@ -31,6 +35,7 @@ var AdminExpenseList = React.createClass({
 							<th>Value</th>
 							<th>Date</th>
 							<th>Time</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -45,9 +50,12 @@ var AdminExpenseList = React.createClass({
 
 var RegularExpenseList = React.createClass({
 	render() {
+		var reactObj = this;
 		var expenseNodes = this.props.data.map(function(expense) {
 			return (
 				<ExpenseItem 
+					onUpdateListItem={reactObj.props.onUpdateListItem}
+					onDeleteListItem={reactObj.props.onDeleteListItem}
 					key={expense.id} 
 					id={expense.id} 
 					name={expense.name} 
@@ -64,12 +72,14 @@ var RegularExpenseList = React.createClass({
 				<table className="table table-hover">
 					<thead>
 						<tr>
+							<th></th>
 							<th>ID</th>
 							<th>Name</th>
 							<th>Description</th>
 							<th>Value</th>
 							<th>Date</th>
 							<th>Time</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -87,12 +97,16 @@ var ExpenseList = React.createClass({
 		if (this.props.isAdmin) {
 			return (
 				<AdminExpenseList
+					onUpdateListItem={this.props.onUpdateListItem}
+					onDeleteListItem={this.props.onDeleteListItem}
 					data={this.props.data}
 				/>
 			);
 		} else {
 			return (
 				<RegularExpenseList
+					onUpdateListItem={this.props.onUpdateListItem}
+					onDeleteListItem={this.props.onDeleteListItem}
 					data={this.props.data}
 				/>
 			);
