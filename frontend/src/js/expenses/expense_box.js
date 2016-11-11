@@ -9,7 +9,7 @@ import ExpenseList from './expense_list'
 
 
 var ExpenseBox = React.createClass({
-	getInitialExpense() {
+	getInitialItem() {
 		return {
 			ownerId: 0,
 			name: '',
@@ -23,8 +23,8 @@ var ExpenseBox = React.createClass({
 	getInitialState() {
 		return {
 			data: [],
-			itemToUpdate: this.getInitialExpense(),
-			itemToDelete: this.getInitialExpense()
+			itemToUpdate: this.getInitialItem(),
+			itemToDelete: this.getInitialItem()
 		};
 	},
 	getObjectById(id) {
@@ -53,15 +53,14 @@ var ExpenseBox = React.createClass({
 		this.setNavTabTo('list');
 	},
 	handleUpdateExpenseSubmit(expense) {
-		console.log(expense);
 		putItem(this, expense);
 		this.setNavTabTo('list');
-		this.setState({itemToUpdate: this.getInitialExpense()});
+		this.setState({itemToUpdate: this.getInitialItem()});
 	},
 	handleDeleteExpenseSubmit(expense) {
 		deleteItem(this, expense);
 		this.setNavTabTo('list');
-		this.setState({itemToDelete: this.getInitialExpense()});
+		this.setState({itemToDelete: this.getInitialItem()});
 	},
 	onUpdateListItem(id) {
 		this.setState({itemToUpdate: this.getObjectById(parseInt(id))});

@@ -57,7 +57,7 @@ export const ExpenseItem = React.createClass({
 			<tr>
 				<td>
 					<button
-						name={'admin-expense-list-update-btn' + this.props.id}
+						name={'expense-list-update-btn-' + this.props.id}
 						value={this.props.id}
 						className="btn btn-default glyphicon glyphicon-pencil"
 						onClick={this.onUpdate}
@@ -72,6 +72,7 @@ export const ExpenseItem = React.createClass({
 				<td>{this.props.time}</td>
 				<td>
 					<button 
+						name={'expense-list-delete-btn-' + this.props.id}
 						value={this.props.id}
 						className="btn btn-danger glyphicon glyphicon-trash"
 						onClick={this.onDelete}
