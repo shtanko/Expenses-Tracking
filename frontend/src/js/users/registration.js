@@ -59,14 +59,16 @@ var RegistrationForm = React.createClass({
 				console.log(xhr);
 			}
 		});
+		this.setState(this.getInitialState());
 	},
 	render() {
 		return (
 			<div>
 				<form onSubmit={this.handleSubmit} >
 					<legend>Registration Form</legend>
-					<div>
+					<div className="form-group">
 						<input 
+							className="form-control"
 							placeholder="Username" 
 							name="username" 
 							value={this.state.username} 
@@ -74,8 +76,9 @@ var RegistrationForm = React.createClass({
 							onChange={this.handleUsernameChange}
 						/>
 					</div>
-					<div>
+					<div className="form-group">
 						<input 
+							className="form-control"
 							placeholder="Email" 
 							name="email" 
 							value={this.state.email} 
@@ -83,8 +86,9 @@ var RegistrationForm = React.createClass({
 							onChange={this.handleEmailChange}
 						/>
 					</div>
-					<div>
+					<div className="form-group">
 						<input 
+							className="form-control"
 							placeholder="Password" 
 							name="password" 
 							value={this.state.password} 
@@ -92,8 +96,9 @@ var RegistrationForm = React.createClass({
 							onChange={this.handlePasswordChange}
 						/>
 					</div>
-					<div>
+					<div className="form-group">
 						<input 
+							className="form-control"
 							placeholder="First name" 
 							name="first_name" 
 							value={this.state.first_name} 
@@ -101,8 +106,9 @@ var RegistrationForm = React.createClass({
 							onChange={this.handleFirstNameChange}
 						/>
 					</div>
-					<div>
+					<div className="form-group">
 						<input 
+							className="form-control"
 							placeholder="Last name" 
 							name="last_name" 
 							value={this.state.last_name} 
@@ -110,7 +116,9 @@ var RegistrationForm = React.createClass({
 							onChange={this.handleLastNameChange}
 						/>
 					</div>
-					<input value="Send" type="submit"/>
+					<div className="form-group">
+						<input className="form-control" value="Send" type="submit"/>
+					</div>
 				</form>
 			</div>
 		);

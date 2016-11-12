@@ -1,8 +1,19 @@
 import React from 'react';
 import $ from 'jquery';
+import getFormLegend from '../formLegend'
 
 
 var CurrentUser = React.createClass({
+	statics : {
+		formLegend: getFormLegend("Your account", "col-sm-6"),
+		submitBnt: (
+			<div className="form-group">
+				<div className="col-sm-offset-2 col-sm-4">
+					<input className="form-control" type="submit" value="Update account" />
+				</div>
+			</div>
+		)
+	},
 	getInitialState() {
 		return  {
 			url: '',
@@ -74,78 +85,79 @@ var CurrentUser = React.createClass({
 	render() {
 		return (
 			<div className="container">
-				<form onSubmit={this.handleSubmit} >
-					<table>
-						<thead>
-							<tr>
-								<th>Key</th>
-								<th>Value</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>Username</td>
-								<td>
-									<input
-										type="text"
-										name="username"
-										placeholder="Your username"
-										onChange={this.handleUsernameChange}
-										value={this.state.username}
-									/>
-								</td>
-							</tr>
-							<tr>
-								<td>Password</td>
-								<td>
-									<input
-										type="password"
-										name="password"
-										placeholder="Password"
-										onChange={this.handlePasswordChange}
-										value={this.state.password}
-									/>
-								</td>
-							</tr>
-							<tr>
-								<td>Email</td>
-								<td>
-									<input
-										type="email"
-										name="email"
-										placeholder="Your email"
-										onChange={this.handleEmailChange}
-										value={this.state.email}
-									/>
-								</td>
-							</tr>
-							<tr>
-								<td>First name</td>
-								<td>
-									<input
-										type="text"
-										name="first_name"
-										placeholder="Your first name"
-										onChange={this.handleFirstNameChange}
-										value={this.state.first_name}
-									/>
-								</td>
-							</tr>
-							<tr>
-								<td>Last name</td>
-								<td>
-									<input
-										type="text"
-										name="last_name"
-										placeholder="Your username"
-										onChange={this.handleLastNameChange}
-										value={this.state.last_name}
-									/>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-					<input type="submit" value="Update account" />
+				<form onSubmit={this.handleSubmit} className="form-horizontal">
+					{this.constructor.formLegend}
+					<div className="form-group">
+						<label htmlFor="current-user-input-username" className="col-sm-2 control-label">Username</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="current-user-input-username"
+								type="text"
+								name="username"
+								placeholder="Your username"
+								onChange={this.handleUsernameChange}
+								value={this.state.username}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label htmlFor="current-user-input-password" className="col-sm-2 control-label">Password</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="current-user-input-password"
+								type="password"
+								name="password"
+								placeholder="Password"
+								onChange={this.handlePasswordChange}
+								value={this.state.password}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label htmlFor="current-user-input-email" className="col-sm-2 control-label">Email</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="current-user-input-email"
+								type="email"
+								name="email"
+								placeholder="Your email"
+								onChange={this.handleEmailChange}
+								value={this.state.email}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label htmlFor="current-user-input-first-name" className="col-sm-2 control-label">First name</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="current-user-input-first-name"
+								type="text"
+								name="first_name"
+								placeholder="Your first name"
+								onChange={this.handleFirstNameChange}
+								value={this.state.first_name}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label htmlFor="current-user-input-last-name" className="col-sm-2 control-label">Last name</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="current-user-input-last-name"
+								type="text"
+								name="last_name"
+								placeholder="Your username"
+								onChange={this.handleLastNameChange}
+								value={this.state.last_name}
+							/>
+						</div>
+					</div>
+					{this.constructor.submitBnt}
 				</form>
 			</div>
 		);

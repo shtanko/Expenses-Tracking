@@ -1,6 +1,7 @@
 import React from 'react';
 import $ from 'jquery';
 import { getItemList, postItem, putItem, deleteItem } from '../transfer_api';
+import getFormLegend from '../formLegend'
 
 
 var UserItem = React.createClass({
@@ -66,7 +67,7 @@ var UserList = React.createClass({
 		return (
 			<div>
 				<h3>List of users</h3>
-				<table className="table table-hover">
+				<table className="table table-hover table-responsive">
 					<thead>
 						<tr>
 							<th></th>
@@ -89,6 +90,16 @@ var UserList = React.createClass({
 });
 
 var CreateUserForm = React.createClass({
+	statics : {
+		formLegend: getFormLegend("Create user", "col-sm-6"),
+		submitBnt: (
+			<div className="form-group">
+				<div className="col-sm-offset-2 col-sm-4">
+					<input className="form-control" type="submit" value="Create user" />
+				</div>
+			</div>
+		)
+	},
 	getInitialState() {
 		return {
 			groups: 0,
@@ -140,51 +151,111 @@ var CreateUserForm = React.createClass({
 	},
 	render() {
 		return (
-			<div>
-				<h3>Create user form</h3>
-				<form onSubmit={this.handleSubmit} >
-					<input 
-						type="number"
-						name="groups"
-						onChange={this.handleGroupsChange}
-						value={this.state.groups}
-					/>
-					<input 
-						type="text" 
-						name="username"
-						placeholder="Username"
-						onChange={this.handleUsernameChange}
-						value={this.state.username}
-					/>
-					<input 
-						type="password"
-						name="password" 
-						placeholder="Password"
-						onChange={this.handlePasswordChange}
-						value={this.state.password}
-					/>
-					<input 
-						type="email" 
-						name="email" 
-						placeholder="Email"
-						onChange={this.handleEmailChange}
-						value={this.state.email}
-					/>
-					<input 
-						type="text" 
-						name="first_name"
-						placeholder="First name"
-						onChange={this.handleFirstNameChange}
-						value={this.state.first_name}
-					/>
-					<input 
-						type="text" 
-						name="last_name"
-						placeholder="Last name"
-						onChange={this.handleLastNameChange}
-						value={this.state.last_name}
-					/>
-					<input type="submit" value="Create user" />
+			<div className="container">
+				<form onSubmit={this.handleSubmit} className="form-horizontal">
+					{this.constructor.formLegend}
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-update-user-input-group"
+							className="col-sm-2 control-label"
+						>Group</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-update-user-input-group"
+								type="number"
+								name="groups"
+								onChange={this.handleGroupsChange}
+								value={this.state.groups}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-update-user-input-username"
+							className="col-sm-2 control-label"
+						>Username</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-update-user-input-username"
+								type="text"
+								name="username"
+								placeholder="Your username"
+								onChange={this.handleUsernameChange}
+								value={this.state.username}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-update-user-input-password"
+							className="col-sm-2 control-label"
+						>Password</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-update-user-input-password"
+								type="password"
+								name="password"
+								placeholder="Password"
+								onChange={this.handlePasswordChange}
+								value={this.state.password}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-update-user-input-email"
+							className="col-sm-2 control-label"
+						>Email</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-update-user-input-email"
+								type="email"
+								name="email"
+								placeholder="Your email"
+								onChange={this.handleEmailChange}
+								value={this.state.email}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-update-user-input-first-name"
+							className="col-sm-2 control-label"
+						>First name</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-update-user-input-first-name"
+								type="text"
+								name="first_name"
+								placeholder="Your first name"
+								onChange={this.handleFirstNameChange}
+								value={this.state.first_name}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-update-user-input-last-name"
+							className="col-sm-2 control-label"
+						>Last name</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-update-user-input-last-name"
+								type="text"
+								name="last_name"
+								placeholder="Your username"
+								onChange={this.handleLastNameChange}
+								value={this.state.last_name}
+							/>
+						</div>
+					</div>
+					{this.constructor.submitBnt}
 				</form>
 			</div>
 		);
@@ -192,6 +263,16 @@ var CreateUserForm = React.createClass({
 });
 
 var UpdateUserForm = React.createClass({
+	statics : {
+		formLegend: getFormLegend("Update user", "col-sm-6"),
+		submitBnt: (
+			<div className="form-group">
+				<div className="col-sm-offset-2 col-sm-4">
+					<input className="form-control" type="submit" value="Update user" />
+				</div>
+			</div>
+		)
+	},
 	getInitialState() {
 		return {
 			groups: 0,
@@ -244,7 +325,7 @@ var UpdateUserForm = React.createClass({
 		var first_name = this.state.first_name.trim();
 		var last_name = this.state.last_name.trim();
 		var url = this.state.url;
-		if (!(username && password) || groups <= 0) {
+		if (!(username && password && url) || groups <= 0) {
 			return;
 		}
 		this.props.onUpdateUserSubmit({
@@ -260,51 +341,111 @@ var UpdateUserForm = React.createClass({
 	},
 	render() {
 		return (
-			<div>
-				<h3>Update user form</h3>
-				<form onSubmit={this.handleSubmit} >
-					<input 
-						type="number"
-						name="groups"
-						onChange={this.handleGroupsChange}
-						value={this.state.groups}
-					/>
-					<input 
-						type="text" 
-						name="username"
-						placeholder="Username"
-						onChange={this.handleUsernameChange}
-						value={this.state.username}
-					/>
-					<input 
-						type="password"
-						name="password" 
-						placeholder="Password"
-						onChange={this.handlePasswordChange}
-						value={this.state.password}
-					/>
-					<input 
-						type="email" 
-						name="email" 
-						placeholder="Email"
-						onChange={this.handleEmailChange}
-						value={this.state.email}
-					/>
-					<input 
-						type="text" 
-						name="first_name"
-						placeholder="First name"
-						onChange={this.handleFirstNameChange}
-						value={this.state.first_name}
-					/>
-					<input 
-						type="text" 
-						name="last_name"
-						placeholder="Last name"
-						onChange={this.handleLastNameChange}
-						value={this.state.last_name}
-					/>
-					<input type="submit" value="Update user" />
+			<div className="container">
+				<form onSubmit={this.handleSubmit} className="form-horizontal">
+					{this.constructor.formLegend}
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-create-user-input-group"
+							className="col-sm-2 control-label"
+						>Group</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-create-user-input-group"
+								type="number"
+								name="groups"
+								onChange={this.handleGroupsChange}
+								value={this.state.groups}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-create-user-input-username"
+							className="col-sm-2 control-label"
+						>Username</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-create-user-input-username"
+								type="text"
+								name="username"
+								placeholder="Your username"
+								onChange={this.handleUsernameChange}
+								value={this.state.username}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-create-user-input-password"
+							className="col-sm-2 control-label"
+						>Password</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-create-user-input-password"
+								type="password"
+								name="password"
+								placeholder="Password"
+								onChange={this.handlePasswordChange}
+								value={this.state.password}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-create-user-input-email"
+							className="col-sm-2 control-label"
+						>Email</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-create-user-input-email"
+								type="email"
+								name="email"
+								placeholder="Your email"
+								onChange={this.handleEmailChange}
+								value={this.state.email}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-create-user-input-first-name"
+							className="col-sm-2 control-label"
+						>First name</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-create-user-input-first-name"
+								type="text"
+								name="first_name"
+								placeholder="Your first name"
+								onChange={this.handleFirstNameChange}
+								value={this.state.first_name}
+							/>
+						</div>
+					</div>
+					<div className="form-group">
+						<label 
+							htmlFor="user-box-create-user-input-last-name"
+							className="col-sm-2 control-label"
+						>Last name</label>
+						<div className="col-sm-4">
+							<input
+								className="form-control"
+								id="user-box-create-user-input-last-name"
+								type="text"
+								name="last_name"
+								placeholder="Your username"
+								onChange={this.handleLastNameChange}
+								value={this.state.last_name}
+							/>
+						</div>
+					</div>
+					{this.constructor.submitBnt}
 				</form>
 			</div>
 		);

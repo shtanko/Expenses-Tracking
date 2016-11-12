@@ -155,9 +155,9 @@ var App = React.createClass({
 			);
 		} else {
 			return (
-				<div className="container">
-					<LoginForm onSuccessfulLogin={this.handleSuccessfulLogin} className="raw" />
-					<RegistrationForm className="raw" />
+				<div id="login-registration-container">
+					<LoginForm onSuccessfulLogin={this.handleSuccessfulLogin} />
+					<RegistrationForm />
 				</div>
 			);
 		}

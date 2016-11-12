@@ -51,8 +51,9 @@ var LoginForm = React.createClass({
 			<div>
 				<form onSubmit={this.handleSubmit} >
 					<legend>Login Form</legend>
-					<div>
+					<div className="form-group">
 						<input 
+							className="form-control"
 							placeholder="Username" 
 							name="username" 
 							value={this.state.username} 
@@ -60,8 +61,9 @@ var LoginForm = React.createClass({
 							onChange={this.handleUsernameChange}
 						/>
 					</div>
-					<div>
+					<div className="form-group">
 						<input 
+							className="form-control"
 							placeholder="Password" 
 							name="password" 
 							value={this.state.password} 
@@ -69,7 +71,9 @@ var LoginForm = React.createClass({
 							onChange={this.handlePasswordChange}
 						/>
 					</div>
-					<input value="Send" type="submit"/>
+					<div className="form-group">
+						<input className="form-control" value="Send" type="submit"/>
+					</div>
 				</form>
 			</div>
 		);

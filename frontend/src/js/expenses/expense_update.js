@@ -1,7 +1,18 @@
 import React from 'react';
+import getFormLegend from '../formLegend'
 
 
 var UpdateExpenseForm = React.createClass({
+	statics : {
+		formLegend: getFormLegend("Update expense", "col-sm-6"),
+		submitBnt: (
+			<div className="form-group">
+				<div className="col-sm-offset-2 col-sm-4">
+					<input className="form-control" type="submit" value="Update expense" />
+				</div>
+			</div>
+		)
+	},
 	getInitialState() {
 		return {
 			ownerId: 0,
@@ -75,71 +86,126 @@ var UpdateExpenseForm = React.createClass({
 	render() {
 		var baseUpdateExpenseInputs = (
 			<div>
-				<input 
-					type="text"
-					name="name"
-					placeholder="Expense short name"
-					onChange={this.handleNameChange}
-					value={this.state.name}
-				/>
-				<input 
-					type="text"
-					name="descr"
-					placeholder="Expense long description"
-					onChange={this.handleDescriptionChange}
-					value={this.state.descr}
-				/>
-				<input 
-					type="text"
-					name="value"
-					placeholder="Value"
-					onChange={this.handleValueChange}
-					value={this.state.value}
-				/>
-				<input 
-					type="date"
-					name="date"
-					placeholder="Date"
-					onChange={this.handleDateChange}
-					value={this.state.date}
-				/>
-				<input 
-					type="time"
-					name="time"
-					placeholder="Time"
-					onChange={this.handleTimeChange}
-					value={this.state.time}
-				/>
+				<div className="form-group">
+					<label 
+						htmlFor="expense-box-update-expense-input-name"
+						className="col-sm-2 control-label"
+					>Name</label>
+					<div className="col-sm-4">
+						<input
+							className="form-control"
+							id="expense-box-update-expense-input-name"
+							type="text"
+							name="name"
+							placeholder="Expense short name"
+							onChange={this.handleNameChange}
+							value={this.state.name}
+						/>
+					</div>
+				</div>
+				<div className="form-group">
+					<label 
+						htmlFor="expense-box-update-expense-input-description"
+						className="col-sm-2 control-label"
+					>Description</label>
+					<div className="col-sm-4">
+						<input
+							className="form-control"
+							id="expense-box-update-expense-input-description"
+							type="text"
+							name="descr"
+							placeholder="Expense long description"
+							onChange={this.handleDescriptionChange}
+							value={this.state.descr}
+						/>
+					</div>
+				</div>
+				<div className="form-group">
+					<label 
+						htmlFor="expense-box-update-expense-input-value"
+						className="col-sm-2 control-label"
+					>Value</label>
+					<div className="col-sm-4">
+						<input
+							className="form-control"
+							id="expense-box-update-expense-input-value"
+							type="text"
+							name="value"
+							placeholder="Value"
+							onChange={this.handleValueChange}
+							value={this.state.value}
+						/>
+					</div>
+				</div>
+				<div className="form-group">
+					<label 
+						htmlFor="expense-box-update-expense-input-date"
+						className="col-sm-2 control-label"
+					>Date</label>
+					<div className="col-sm-4">
+						<input
+							className="form-control"
+							id="expense-box-update-expense-input-date"
+							type="date"
+							name="date"
+							placeholder="Date"
+							onChange={this.handleDateChange}
+							value={this.state.date}
+						/>
+					</div>
+				</div>
+				<div className="form-group">
+					<label 
+						htmlFor="expense-box-update-expense-input-time"
+						className="col-sm-2 control-label"
+					>Time</label>
+					<div className="col-sm-4">
+						<input
+							className="form-control"
+							id="expense-box-update-expense-input-time"
+							type="time"
+							name="time"
+							placeholder="Time"
+							onChange={this.handleTimeChange}
+							value={this.state.time}
+						/>
+					</div>
+				</div>
 			</div>
-		);
-		var formHeader = (
-			<h3>Update expense form</h3>
 		);
 		if (this.props.isAdmin) {
 			return (
-				<div>
-					{formHeader}
-					<form onSubmit={this.handleSubmit} >
-						<div>
-							<input 
-								type="number"
-								name="ownerId"
-								onChange={this.handleOwnerChange}
-								value={this.state.ownerId}
-							/>
+				<div className="container">
+					<form onSubmit={this.handleSubmit} className="form-horizontal">
+						{this.constructor.formLegend}
+						<div className="form-group">
+							<label 
+								htmlFor="expense-box-update-expense-input-owner-id"
+								className="col-sm-2 control-label"
+							>Owner ID</label>
+							<div className="col-sm-4">
+								<input
+									className="form-control"
+									id="expense-box-update-expense-input-owner-id"
+									type="number"
+									name="ownerId"
+									onChange={this.handleOwnerChange}
+									value={this.state.ownerId}
+								/>
+							</div>
 						</div>
-						{baseUpdateExpenseInputs}						
-						<input type="submit" value="Update expense" />
+						{baseUpdateExpenseInputs}
+						{this.constructor.submitBnt}
 					</form>
 				</div>
 			);
 		} else {
 			return (
-				<div>
-					{formHeader}
-					<form onSubmit={this.handleSubmit} >
+				<div className="container">
+					<form onSubmit={this.handleSubmit} className="form-horizontal">
+						{this.constructor.formLegend}
 						{baseUpdateExpenseInputs}						
-						<input type="submit" value="Update expense" />
+						{this.constructor.submitBnt}
 					</form>
 				</div>
 			);
